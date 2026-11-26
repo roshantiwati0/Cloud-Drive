@@ -62,7 +62,8 @@ public sealed partial class LocalMobileBridgeService
         || path.Equals("/api/drives", StringComparison.OrdinalIgnoreCase)
         || path.Equals("/api/drives/mount", StringComparison.OrdinalIgnoreCase)
         || path.Equals("/api/drives/unmount", StringComparison.OrdinalIgnoreCase)
-        || path.StartsWith("/api/cli/", StringComparison.OrdinalIgnoreCase);
+        || path.StartsWith("/api/cli/", StringComparison.OrdinalIgnoreCase)
+        || path.StartsWith("/api/gemini/", StringComparison.OrdinalIgnoreCase);
 
     /// <summary>
     /// Routes only the terminal may use. /api/cli/send?device=&lt;id or name&gt;&amp;path=&lt;path&gt;[|&lt;path&gt;…] offers files on this

@@ -204,11 +204,38 @@
     const id = app ? idOf(item.path) : null;
     if (!id || item.readOnly) return [];
     const onPc = String(id).startsWith('received:');
-    return [
+    const actions = [];
+    if (!item.isFolder) {
+      actions.push({ icon: '<span style="font-size:18px;">✨</span>', title: 'Ask Gemini', sub: 'AI summary, questions and tags', fn: () => geminiInsights(item, id) });
+    }
+    actions.push(
       { icon: ICON.rename, title: 'Rename', sub: onPc ? 'Change the name on the PC' : 'Change the name on the cloud drive', fn: () => rename(item, id) },
       { icon: ICON.move, title: 'Move to…', sub: 'Then open the folder it should go to', fn: () => startMove(item, id) },
       { icon: ICON.trash, title: 'Delete', sub: 'Goes to ' + binOf(id), fn: () => remove(item, id) }
-    ];
+    );
+    return actions;
+  }
+
+  let activeGeminiId = '';
+  async function geminiInsights(item, id) {
+    if (!app) return;
+    activeGeminiId = id;
+    $('gemini-file-title').textContent = '✨ ' + item.name;
+    $('gemini-file-sub').textContent = 'Generating summary with Gemini...';
+    $('gemini-body').textContent = 'Thinking...';
+    app.openSheet('gemini-sheet');
+
+    try {
+      const res = await app.post('/api/gemini/summarize?path=' + encodeURIComponent(id), {});
+      if (res && res.summary) {
+        $('gemini-file-sub').textContent = 'Executive Summary';
+        $('gemini-body').textContent = res.summary;
+      } else {
+        $('gemini-body').textContent = (res && res.error) || 'Failed to generate summary.';
+      }
+    } catch (e) {
+      $('gemini-body').textContent = 'Error: ' + (e.message || e);
+    }
   }
 
   // ---- camera backup (Android app only) ----------------------------------------------------------------------
@@ -397,6 +424,18 @@
           <div id="backup-settings-body"></div>
         </div>
       </div>
+      <div id="gemini-sheet" class="m3-bottom-sheet-backdrop" data-act="sheet-close">
+        <div class="m3-bottom-sheet" style="max-height: 85vh; display: flex; flex-direction: column;">
+          <div class="m3-drag-handle"></div>
+          <div class="sheet-title" id="gemini-file-title" style="font-weight: 600; font-size: 16px;">✨ Gemini AI Insights</div>
+          <div class="sheet-subtitle" id="gemini-file-sub" style="font-size: 12px; opacity: 0.7;">Analyzing file...</div>
+          <div id="gemini-body" style="overflow-y: auto; flex: 1; padding: 12px 0; font-size: 13.5px; line-height: 1.5; white-space: pre-wrap; user-select: text;"></div>
+          <div style="display: flex; gap: 8px; margin-top: 8px;">
+            <input type="text" id="gemini-q-input" placeholder="Ask a question about this file..." style="flex: 1; padding: 10px; border-radius: 8px; border: 1px solid rgba(128,128,128,0.3); background: rgba(128,128,128,0.1); color: inherit;">
+            <button class="m3-filled-btn" id="gemini-q-btn" style="padding: 0 16px;">Ask</button>
+          </div>
+        </div>
+      </div>
       <input type="file" id="fs-uploader" style="display: none;" multiple>`;
     while (box.firstElementChild) document.body.appendChild(box.firstElementChild);
 
@@ -407,6 +446,24 @@
     ($('tab-ssd') || document.body).appendChild(bar);
 
     $('fs-prompt-input').addEventListener('keydown', (e) => { if (e.key === 'Enter') answer($('fs-prompt-input').value.trim()); });
+    $('gemini-q-btn')?.addEventListener('click', async () => {
+      const q = $('gemini-q-input').value.trim();
+      if (!q || !activeGeminiId) return;
+      $('gemini-q-input').value = '';
+      const body = $('gemini-body');
+      body.textContent += '\n\nQ: ' + q + '\nThinking...';
+      body.scrollTop = body.scrollHeight;
+      try {
+        const res = await app.post('/api/gemini/ask?path=' + encodeURIComponent(activeGeminiId) + '&q=' + encodeURIComponent(q), {});
+        body.textContent = body.textContent.replace('Thinking...', 'A: ' + (res.answer || res.error || 'No answer'));
+        body.scrollTop = body.scrollHeight;
+      } catch (e) {
+        body.textContent = body.textContent.replace('Thinking...', 'Error: ' + (e.message || e));
+      }
+    });
+    $('gemini-q-input')?.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') $('gemini-q-btn')?.click();
+    });
     $('fs-uploader').addEventListener('change', (e) => {
       const files = Array.from(e.target.files || []);
       const folder = idOf(uploadFolder);

@@ -1,0 +1,440 @@
+/* =============================================================================================================
+   Three more looks — More → Look and language → App look. app.js sets data-look on <html> as for the older looks
+   (and data-theme: light for kit and paper, dark for glow):
+
+   kit   — a file-manager look: pale page, white cards without borders, one indigo-blue, rounded-square icon tiles,
+           a blue card for the PC on top of Home, a white bottom bar with rounded top corners.
+   paper — black on white: no shadows, thin lines, small corners, big letters; blue only for progress and "you are
+           here"; the bottom bar is words only.
+   glow  — black with one lime colour: storage as round gauges, tall send tiles, a floating round bottom bar that
+           names only the chosen tab.
+
+   In these looks Home starts with a title row (#nl-top) and its own top part (#nl-home), both made by newlooks.js
+   from the numbers of the older tiles, which are hidden. Loaded after pages.css and before glass.css; the glass
+   effect's fills for these looks are at the end.
+   ============================================================================================================= */
+
+@font-face {
+  font-family: "Space Grotesk";
+  src: url("space-grotesk.woff2") format("woff2");
+  font-weight: 500 700;
+  font-display: swap;
+}
+
+/* ---------------------------------------------------------------- 1. tokens */
+:root[data-look="kit"] {
+  color-scheme: light;
+  --md-sys-color-background: #F3F5F9;
+  --md-sys-color-surface: #FFFFFF;
+  --md-sys-color-surface-variant: #E9EDF5;
+  --md-sys-color-surface-container: #FFFFFF;
+  --md-sys-color-on-background: #0E1525;
+  --md-sys-color-on-surface: #0E1525;
+  --md-sys-color-on-surface-variant: #5B6472;
+  --md-sys-color-primary: #3457F1;
+  --md-sys-color-primary-container: #E9EDFE;
+  --md-sys-color-on-primary-container: #2A44C8;
+  --md-sys-color-secondary-container: #E9EDFE;
+  --md-sys-color-on-secondary-container: #2A44C8;
+  --md-sys-color-outline: #8A93A3;
+  --md-sys-color-outline-variant: #DDE2EC;
+  --dim: #5B6472;
+  --divider: rgba(14, 21, 37, 0.08);
+  --ink: 14 21 37;
+  --surface-rgb: 255 255 255;
+  --on-primary: #FFFFFF;
+  --success: #3457F1;
+  --info: #3457F1;
+  --warning: #B45309;
+  --error: #B91C1C;
+  --hero-1: #E9EDFE;
+  --hero-2: #F3F5F9;
+  --card-1: #FFFFFF;
+  --card-2: #FFFFFF;
+  --code-bg: #EEF1F6;
+  --shadow: rgba(14, 21, 37, 0.14);
+  --look-tint: #E9EDFE;
+  --look-line: #E3E7EF;
+  --look-radius: 20px;
+  --nl-accent: #3457F1;
+  --nl-head: "Space Grotesk", Roboto, system-ui, sans-serif;
+  --cat-downloads-bg: #E9EDFE; --cat-downloads-fg: #2A44C8;
+  --cat-images-bg: #E9EDFE; --cat-images-fg: #2A44C8;
+  --cat-videos-bg: #E9EDFE; --cat-videos-fg: #2A44C8;
+  --cat-audio-bg: #E9EDFE; --cat-audio-fg: #2A44C8;
+  --cat-docs-bg: #E9EDFE; --cat-docs-fg: #2A44C8;
+  --cat-apps-bg: #E9EDFE; --cat-apps-fg: #2A44C8;
+  --cat-safe-bg: #E9EDFE; --cat-safe-fg: #2A44C8;
+  --cat-starred-bg: #E9EDFE; --cat-starred-fg: #2A44C8;
+}
+/* Paper: the "primary" is the ink itself (buttons, icons, links are black); blue is kept for progress and place. */
+:root[data-look="paper"] {
+  color-scheme: light;
+  --md-sys-color-background: #FFFFFF;
+  --md-sys-color-surface: #FFFFFF;
+  --md-sys-color-surface-variant: #F3F4F6;
+  --md-sys-color-surface-container: #FFFFFF;
+  --md-sys-color-on-background: #111318;
+  --md-sys-color-on-surface: #111318;
+  --md-sys-color-on-surface-variant: #4B5563;
+  --md-sys-color-primary: #111318;
+  --md-sys-color-primary-container: #F3F4F6;
+  --md-sys-color-on-primary-container: #111318;
+  --md-sys-color-secondary-container: #F3F4F6;
+  --md-sys-color-on-secondary-container: #111318;
+  --md-sys-color-outline: #6B7280;
+  --md-sys-color-outline-variant: #E5E7EB;
+  --dim: #4B5563;
+  --divider: rgba(17, 19, 24, 0.10);
+  --ink: 17 19 24;
+  --surface-rgb: 255 255 255;
+  --on-primary: #FFFFFF;
+  --success: #2563EB;
+  --info: #2563EB;
+  --warning: #B45309;
+  --error: #B91C1C;
+  --hero-1: #FFFFFF;
+  --hero-2: #FFFFFF;
+  --card-1: #FFFFFF;
+  --card-2: #FFFFFF;
+  --code-bg: #F3F4F6;
+  --shadow: rgba(17, 19, 24, 0.12);
+  --look-tint: #F3F4F6;
+  --look-line: #E5E7EB;
+  --look-radius: 12px;
+  --nl-accent: #2563EB;
+  --nl-head: Roboto, system-ui, sans-serif;
+  --cat-downloads-bg: #F3F4F6; --cat-downloads-fg: #111318;
+  --cat-images-bg: #F3F4F6; --cat-images-fg: #111318;
+  --cat-videos-bg: #F3F4F6; --cat-videos-fg: #111318;
+  --cat-audio-bg: #F3F4F6; --cat-audio-fg: #111318;
+  --cat-docs-bg: #F3F4F6; --cat-docs-fg: #111318;
+  --cat-apps-bg: #F3F4F6; --cat-apps-fg: #111318;
+  --cat-safe-bg: #F3F4F6; --cat-safe-fg: #111318;
+  --cat-starred-bg: #F3F4F6; --cat-starred-fg: #111318;
+}
+:root[data-look="glow"] {
+  color-scheme: dark;
+  --md-sys-color-background: #0A0A0C;
+  --md-sys-color-surface: #17171A;
+  --md-sys-color-surface-variant: #1F1F23;
+  --md-sys-color-surface-container: #17171A;
+  --md-sys-color-on-background: #F4F4F5;
+  --md-sys-color-on-surface: #F4F4F5;
+  --md-sys-color-on-surface-variant: #A1A1AA;
+  --md-sys-color-primary: #C6F26B;
+  --md-sys-color-primary-container: #2A3314;
+  --md-sys-color-on-primary-container: #D9F99D;
+  --md-sys-color-secondary-container: #2A3314;
+  --md-sys-color-on-secondary-container: #D9F99D;
+  --md-sys-color-outline: #52525B;
+  --md-sys-color-outline-variant: #27272B;
+  --dim: #A1A1AA;
+  --divider: rgba(255, 255, 255, 0.08);
+  --ink: 255 255 255;
+  --surface-rgb: 23 23 26;
+  --on-primary: #0A0A0C;
+  --success: #C6F26B;
+  --info: #A5B4FC;
+  --warning: #FDBA74;
+  --error: #F87171;
+  --hero-1: #17171A;
+  --hero-2: #0A0A0C;
+  --card-1: #17171A;
+  --card-2: #17171A;
+  --code-bg: #111113;
+  --shadow: rgba(0, 0, 0, 0.6);
+  --look-tint: #2A3314;
+  --look-line: #27272B;
+  --look-radius: 22px;
+  --nl-accent: #C6F26B;
+  --nl-head: "Space Grotesk", Roboto, system-ui, sans-serif;
+  --cat-downloads-bg: #1F1F23; --cat-downloads-fg: #C6F26B;
+  --cat-images-bg: #1F1F23; --cat-images-fg: #C6F26B;
+  --cat-videos-bg: #1F1F23; --cat-videos-fg: #C6F26B;
+  --cat-audio-bg: #1F1F23; --cat-audio-fg: #C6F26B;
+  --cat-docs-bg: #1F1F23; --cat-docs-fg: #C6F26B;
+  --cat-apps-bg: #1F1F23; --cat-apps-fg: #C6F26B;
+  --cat-safe-bg: #1F1F23; --cat-safe-fg: #C6F26B;
+  --cat-starred-bg: #1F1F23; --cat-starred-fg: #C6F26B;
+}
+
+/* ---------------------------------------------------------------- 2. the parts newlooks.js adds: only in these looks */
+.nl-top, .nl-home { display: none; }
+:root:is([data-look="kit"], [data-look="paper"], [data-look="glow"]) .nl-top { display: flex; }
+:root:is([data-look="kit"], [data-look="paper"], [data-look="glow"]) .nl-home { display: flex; }
+/* The older Home tiles give their numbers to #nl-home and stay out of sight. */
+:root:is([data-look="kit"], [data-look="paper"], [data-look="glow"]) .nl-old-tiles { display: none; }
+/* The headings the older Home has are here too: "System & Storage" with Live at its right over the cards, a small
+   heading over each row of cards, and "Send to PC" (the page's own) over the send tiles. */
+.nl-head { margin: 4px 0 -4px; }
+.nl-head-live { display: flex; align-items: center; gap: 6px; cursor: default; color: var(--nl-accent); }
+.nl-off .nl-head-live { color: var(--dim); }
+.nl-home .hw-group-title { margin: 0 2px -6px; color: var(--dim); }
+.nl-home .hw-group-title:empty { display: none; }
+/* Glow says Live beside the PC's name already. */
+:root[data-look="glow"] .nl-head-live { display: none; }
+/* The search bar opens from the title row's search button, and for as long as a search is on. */
+:root:is([data-look="kit"], [data-look="paper"], [data-look="glow"]) .search-header { display: none; }
+:root:is([data-look="kit"], [data-look="paper"], [data-look="glow"]) body:is(.nl-search, .searching) .search-header { display: block; }
+:root:is([data-look="kit"], [data-look="paper"], [data-look="glow"]) body:is(.nl-search, .searching) .nl-top { display: none; }
+:root:is([data-look="kit"], [data-look="paper"], [data-look="glow"]) body:not(.nl-search):not(.searching) .sticky-bar { top: 0; }
+
+/* The title row: the tab's name, the search button, this phone's letter. */
+.nl-top { align-items: center; gap: 10px; padding: 14px 16px 2px 16px; }
+.nl-top-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; text-align: left; border: none; background: transparent; padding: 0; font: inherit; color: inherit; }
+.nl-over { font-size: 12px; color: var(--dim); display: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.nl-title { font-family: var(--nl-head); font-size: 24px; font-weight: 700; letter-spacing: -0.3px; color: var(--md-sys-color-on-background); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.nl-status { display: none; align-items: center; gap: 8px; font-size: 14px; color: var(--dim); min-width: 0; }
+.nl-status > span:last-child { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.nl-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--nl-accent); flex: none; }
+.nl-off .nl-dot { background: var(--md-sys-color-outline); }
+.nl-live { display: none; align-items: center; gap: 6px; height: 30px; padding: 0 12px; border-radius: 15px; border: 1px solid var(--nl-accent); color: var(--nl-accent); font-size: 12px; font-weight: 600; flex: none; }
+.nl-off .nl-live { border-color: var(--md-sys-color-outline); color: var(--dim); }
+.nl-icon-btn { width: 40px; height: 40px; flex: none; border: none; display: flex; align-items: center; justify-content: center; padding: 0; font: inherit; font-size: 15px; font-weight: 600; cursor: pointer; color: var(--md-sys-color-on-surface); background: var(--md-sys-color-surface); border-radius: 14px; }
+.nl-icon-btn svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+.nl-me { background: var(--md-sys-color-primary); color: var(--on-primary); }
+
+/* Home's top part: the PC, the three storages, the smaller numbers. */
+.nl-home { flex-direction: column; gap: 12px; margin-bottom: 16px; }
+.nl-pc { display: none; }
+.nl-stores { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.nl-store { min-width: 0; display: flex; flex-direction: column; gap: 4px; text-align: left; border: none; padding: 12px; font: inherit; color: var(--md-sys-color-on-surface); background: var(--md-sys-color-surface); border-radius: 18px; cursor: pointer; }
+.nl-store-label { font-size: 11px; color: var(--dim); }
+.nl-store-big { font-family: var(--nl-head); font-size: 17px; font-weight: 600; line-height: 1.15; }
+.nl-store-word, .nl-store-sub { font-size: 11px; color: var(--dim); line-height: 1.3; overflow-wrap: anywhere; }
+/* The bar sits at the foot of its card, so the bars of a row are on one line whatever the text above them. */
+.nl-store-bar { height: 5px; flex: none; border-radius: 3px; background: rgb(var(--ink) / 0.08); margin-top: auto; overflow: hidden; }
+.nl-store-sub { margin-bottom: 6px; }
+.nl-store-bar > i { display: block; height: 100%; border-radius: 3px; background: var(--nl-accent); }
+.nl-ring { display: none; position: relative; width: 72px; height: 72px; }
+.nl-ring svg { width: 72px; height: 72px; display: block; }
+.nl-ring circle { fill: none; stroke-width: 7; }
+.nl-ring circle:first-child { stroke: #27272B; }
+.nl-ring circle:last-child { stroke: var(--nl-accent); stroke-linecap: round; }
+.nl-ring b { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-family: var(--nl-head); font-size: 16px; font-weight: 700; }
+
+/* The three looks in the picker. */
+.look-swatch-kit i:nth-child(1) { background: #3457F1; flex: 1.4; }
+.look-swatch-kit i:nth-child(2) { background: #F3F5F9; }
+.look-swatch-kit i:nth-child(3) { background: #E9EDFE; }
+.look-swatch-paper i:nth-child(1) { background: #FFFFFF; flex: 1.4; }
+.look-swatch-paper i:nth-child(2) { background: #111318; }
+.look-swatch-paper i:nth-child(3) { background: #2563EB; }
+.look-swatch-glow i:nth-child(1) { background: #0A0A0C; flex: 1.4; }
+.look-swatch-glow i:nth-child(2) { background: #17171A; }
+.look-swatch-glow i:nth-child(3) { background: #C6F26B; }
+
+/* ---------------------------------------------------------------- 3. all three: headings, bars, progress */
+:root:is([data-look="kit"], [data-look="paper"], [data-look="glow"]) :is(.hw-widget-bar-fill, .dl-progress-bar-fill, .transfer-progress-fill, .storage-bar-fill) { background: var(--nl-accent); }
+:root:is([data-look="kit"], [data-look="paper"], [data-look="glow"]) .xt-bar > div { background: var(--nl-accent); }
+:root:is([data-look="kit"], [data-look="paper"], [data-look="glow"]) .profile-avatar { background: var(--md-sys-color-primary); color: var(--on-primary); }
+:root:is([data-look="kit"], [data-look="glow"]) :is(.section-title, .page-bar .conn-modal-title, .page-bar-title, .more-me-name, .xt-title) { font-family: var(--nl-head); }
+:root:is([data-look="kit"], [data-look="glow"]) #tab-home .section-title { font-size: 16px; font-weight: 600; letter-spacing: 0; color: var(--md-sys-color-on-surface); margin-bottom: 0; }
+
+/* ---------------------------------------------------------------- 4. Kit */
+:root[data-look="kit"] .nl-pc { display: flex; flex-direction: column; gap: 14px; padding: 16px; border-radius: 24px; background: var(--md-sys-color-primary); color: #FFFFFF; cursor: pointer; }
+:root[data-look="kit"] .nl-pc-row { display: flex; align-items: center; gap: 12px; }
+:root[data-look="kit"] .nl-pc-icon { width: 44px; height: 44px; border-radius: 15px; background: rgb(255 255 255 / 0.16); display: flex; align-items: center; justify-content: center; flex: none; }
+:root[data-look="kit"] .nl-pc-icon svg { width: 22px; height: 22px; fill: none; stroke: #FFFFFF; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+:root[data-look="kit"] .nl-pc-text { flex: 1; min-width: 0; }
+:root[data-look="kit"] .nl-pc-name { font-family: var(--nl-head); font-size: 18px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+:root[data-look="kit"] .nl-pc-sub { font-size: 12px; color: #E3E8FF; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+:root[data-look="kit"] .nl-pc-chip { height: 26px; padding: 0 10px; border-radius: 13px; background: #FFFFFF; color: #2A44C8; font-size: 11px; font-weight: 600; display: flex; align-items: center; white-space: nowrap; flex: none; }
+:root[data-look="kit"] .nl-pc-actions { display: flex; gap: 8px; }
+:root[data-look="kit"] .nl-pc-actions button { flex: 1; min-width: 0; height: 40px; border: none; border-radius: 14px; font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; background: rgb(255 255 255 / 0.16); color: #FFFFFF; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 8px; }
+:root[data-look="kit"] .nl-pc-actions button:first-child { background: #FFFFFF; color: #2A44C8; }
+/* Cards: white, no border, no shadow. */
+:root[data-look="kit"] :is(.hw-widget-card, .cat-grid-card, .pc-drive-row, .storage-device-card, .recent-card, .recent-empty-card, .recent-file-card,
+  .clean-card, .share-btn-card, .gaming-hero-card, .phone-permission-card, .mini-media-card, .usage-rows, .xfer-card,
+  .transfer-card-item, .device-row, .explorer-item, .phone-file-item, .phone-item-row, .file-row-item, .conn-row, .gm-card,
+  .more-me, .more-row, .xt-card, .xt-list, .send-tile, .phone-quick-btn, .settings-row, .perm-row, .pc-connection-banner-card, .saver-card) { border-color: transparent; box-shadow: none; }
+:root[data-look="kit"] :is(.more-me, .more-row, .xt-card, .xt-list, .pc-connection-banner-card, .saver-card) { border-radius: 20px; }
+/* Icon holders: rounded squares in the pale blue. */
+:root[data-look="kit"] :is(.hw-icon-box, .conn-modal-icon-wrap, .perm-card-icon, .recent-card-icon, .clean-card-icon, .m3-sheet-file-icon,
+  .more-row-icon, .send-tile-icon, .xt-icon, .cat-grid-icon-box, .pc-conn-icon-halo) { border-radius: 14px; background: var(--look-tint); color: var(--md-sys-color-on-primary-container); }
+:root[data-look="kit"] .more-me-avatar { border-radius: 16px; }
+:root[data-look="kit"] :is(.m3-filled-btn, .m3-tonal-btn, .modal-btn-primary, .conn-master-btn, .quick-chip-btn, .xt-btn, .drive-btn, .pc-conn-toggle-btn) { border-radius: 14px; }
+:root[data-look="kit"] .transfer-chip { border-radius: 12px; }
+:root[data-look="kit"] .xt-link { border-radius: 9px; }
+/* Send to PC: the three in one white card. */
+:root[data-look="kit"] .send-tiles { background: var(--md-sys-color-surface); border-radius: 20px; padding: 12px 8px; gap: 4px; }
+:root[data-look="kit"] .send-tile { background: transparent; padding: 4px 0; font-size: 12px; font-weight: 500; }
+:root[data-look="kit"] .send-tile-icon { width: 44px; height: 44px; border-radius: 15px; }
+/* Search bar (when open) and the bottom bar. */
+:root[data-look="kit"] .search-bar-pill { background: #FFFFFF; border: none; box-shadow: none; border-radius: 14px; }
+:root[data-look="kit"] .material-bottom-nav { height: 66px; border-top: none; border-radius: 22px 22px 0 0; box-shadow: 0 -6px 24px rgba(14, 21, 37, 0.06); }
+:root[data-look="kit"] .nav-tab.active .nav-icon-indicator { background: transparent; }
+:root[data-look="kit"] .nav-icon-indicator { height: 26px; margin-bottom: 2px; }
+:root[data-look="kit"] .nav-tab.active .nav-icon-indicator svg { fill: #2A44C8; }
+:root[data-look="kit"] .nav-tab .nav-label { font-size: 11px; font-weight: 600; }
+:root[data-look="kit"] .nav-tab.active .nav-label { color: #2A44C8; }
+:root[data-look="kit"] body { padding-bottom: 78px; }
+
+/* ---------------------------------------------------------------- 5. Paper */
+:root[data-look="paper"] .nl-top { padding: 18px 20px 4px 20px; align-items: flex-start; }
+:root[data-look="paper"] .nl-title { font-size: 30px; letter-spacing: -0.8px; line-height: 1.15; }
+:root[data-look="paper"] .nl-top.nl-on-home .nl-status { display: flex; }
+:root[data-look="paper"] .nl-me { display: none; }
+:root[data-look="paper"] .nl-icon-btn { background: transparent; width: 44px; height: 44px; }
+:root[data-look="paper"] .nl-icon-btn svg { width: 22px; height: 22px; }
+:root[data-look="paper"] .tab-screen { padding-left: 20px; padding-right: 20px; }
+:root[data-look="paper"] .nl-stores { gap: 0; border-top: 1px solid #111318; border-bottom: 1px solid var(--look-line); }
+:root[data-look="paper"] .nl-store { background: transparent; border-radius: 0; padding: 14px 4px 14px 0; gap: 2px; }
+:root[data-look="paper"] .nl-store-label { font-size: 12px; }
+:root[data-look="paper"] .nl-store-big { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; }
+:root[data-look="paper"] .nl-store-word, :root[data-look="paper"] .nl-store-sub { font-size: 12px; }
+:root[data-look="paper"] .nl-store-bar { display: none; }
+/* "Live" is a state, not a link; and the second row needs no line under it: the next heading brings its own. */
+:root[data-look="paper"] .nl-home .nl-head-live { text-decoration: none; }
+:root[data-look="paper"] .nl-more { border-bottom: none; }
+:root[data-look="paper"] .nl-home { gap: 12px; margin-bottom: 14px; }
+/* Send: three outlined buttons, the first one filled. */
+:root[data-look="paper"] .send-tile { flex-direction: row; justify-content: center; gap: 6px; height: 46px; padding: 0 6px; border: 1.5px solid #111318; border-radius: 12px; background: #FFFFFF; color: #111318; }
+:root[data-look="paper"] .send-tile:first-child { background: #111318; color: #FFFFFF; }
+:root[data-look="paper"] .send-tile-icon { width: 16px; height: 16px; background: transparent; border-radius: 0; flex: none; }
+:root[data-look="paper"] .send-tile-icon svg { width: 16px; height: 16px; fill: currentColor; }
+/* Headings: small capitals with a line above. */
+:root[data-look="paper"] .section-title { font-size: 12px; font-weight: 600; letter-spacing: 0.6px; text-transform: uppercase; color: var(--dim); margin-bottom: 0; }
+:root[data-look="paper"] #tab-home .section-header { border-top: 1px solid var(--look-line); padding-top: 10px; margin-bottom: 6px; }
+:root[data-look="paper"] .section-action { text-decoration: underline; }
+/* Cards: thin lines, small corners, no shadow; icon holders have no fill. */
+:root[data-look="paper"] :is(.hw-widget-card, .cat-grid-card, .pc-drive-row, .storage-device-card, .recent-card, .clean-card, .share-btn-card,
+  .gaming-hero-card, .phone-permission-card, .mini-media-card, .usage-rows, .device-row, .modal-card, .more-me, .more-row,
+  .explorer-item, .phone-file-item, .phone-item-row, .file-row-item, .xfer-card, .transfer-card-item, .phone-quick-btn, .pc-connection-banner-card,
+  .saver-card, .settings-row, .perm-row, .look-card) { border-radius: 12px; box-shadow: none; }
+:root[data-look="paper"] :is(.hw-icon-box, .conn-modal-icon-wrap, .perm-card-icon, .recent-card-icon, .clean-card-icon, .m3-sheet-file-icon,
+  .more-row-icon, .cat-grid-icon-box, .pc-conn-icon-halo) { background: transparent; border-radius: 0; color: #111318; }
+:root[data-look="paper"] .more-me-avatar { border-radius: 12px; }
+/* Buttons: black filled, white outlined. */
+:root[data-look="paper"] :is(.m3-filled-btn, .m3-tonal-btn, .modal-btn-primary, .conn-master-btn, .quick-chip-btn, .drive-btn, .pc-conn-toggle-btn) { border-radius: 12px; }
+:root[data-look="paper"] :is(.m3-tonal-btn, .quick-chip-btn, .clean-action-btn, .remote-btn, .mini-media-btn, .tc-action-btn, .gaming-refresh-btn,
+  .modal-btn-sm, .conn-ping-btn) { background: #FFFFFF; color: #111318; border: 1.5px solid #111318; }
+:root[data-look="paper"] .transfer-chip { border-radius: 8px; }
+/* Transfers: flat rows between lines. */
+:root[data-look="paper"] .xt-card { border: none; border-bottom: 1px solid var(--look-line); border-radius: 0; padding: 6px 0 14px; background: transparent; }
+:root[data-look="paper"] .xt-icon { display: none; }
+:root[data-look="paper"] .xt-title { font-size: 16px; }
+:root[data-look="paper"] .xt-link { background: transparent; border: 1px solid var(--look-line); border-radius: 6px; color: #111318; }
+:root[data-look="paper"] .xt-bar { height: 4px; border-radius: 0; }
+:root[data-look="paper"] .xt-bar > div { border-radius: 0; }
+:root[data-look="paper"] .xt-foot { border-top: none; padding-top: 2px; margin-top: 6px; }
+:root[data-look="paper"] .xt-btn, :root[data-look="paper"] .xt-btn.ghost { background: transparent; border: none; color: #111318; text-decoration: underline; padding: 0 2px; height: 44px; }
+:root[data-look="paper"] .xt-list { border: none; border-radius: 0; background: transparent; }
+:root[data-look="paper"] .xt-row { padding: 10px 0; }
+:root[data-look="paper"] .xt-dot { background: var(--nl-accent); }
+:root[data-look="paper"] .xt-dot.bad { background: var(--warning); }
+/* Search bar (when open), the page bar, the bottom bar: words only, a blue line over the chosen one. */
+:root[data-look="paper"] .search-bar-pill { background: #FFFFFF; border: 1.5px solid #111318; box-shadow: none; border-radius: 12px; }
+:root[data-look="paper"] .page-bar { border-bottom: 1px solid #111318 !important; }
+:root[data-look="paper"] .material-bottom-nav { height: 58px; border-top: 1px solid #111318; align-items: stretch; }
+:root[data-look="paper"] .nav-icon-indicator { display: none; }
+:root[data-look="paper"] .nav-tab { border-top: 3px solid transparent; padding: 0; }
+:root[data-look="paper"] .nav-tab.active { border-top-color: var(--nl-accent); }
+:root[data-look="paper"] .nav-tab .nav-label { font-size: 12px; color: var(--dim); }
+:root[data-look="paper"] .nav-tab.active .nav-label { font-weight: 700; color: #111318; }
+:root[data-look="paper"] .material-fab { border-radius: 12px; }
+:root[data-look="paper"] body { padding-bottom: 70px; }
+
+/* ---------------------------------------------------------------- 6. Glow */
+:root[data-look="glow"] .nl-top { padding: 16px 16px 2px 16px; }
+:root[data-look="glow"] .nl-top.nl-on-home .nl-over { display: block; }
+:root[data-look="glow"] .nl-top.nl-on-home .nl-live { display: flex; }
+:root[data-look="glow"] .nl-title { font-size: 22px; }
+:root[data-look="glow"] .nl-me { display: none; }
+:root[data-look="glow"] .nl-icon-btn { border-radius: 50%; }
+:root[data-look="glow"] .nl-store { align-items: center; text-align: center; border-radius: 22px; padding: 12px 6px; gap: 6px; }
+:root[data-look="glow"] .nl-ring { display: block; }
+:root[data-look="glow"] .nl-store-label { font-size: 12px; font-weight: 600; color: var(--md-sys-color-on-surface); order: 2; }
+:root[data-look="glow"] .nl-store-big { display: none; }
+:root[data-look="glow"] .nl-store-word { display: none; }
+:root[data-look="glow"] .nl-store-sub { order: 3; }
+:root[data-look="glow"] .nl-store-bar { display: none; }
+/* Send: tall tiles, the first one lit. */
+:root[data-look="glow"] .send-tile { align-items: flex-start; justify-content: space-between; height: 76px; padding: 12px; border-radius: 22px; border-color: transparent; }
+:root[data-look="glow"] .send-tile:first-child { background: var(--md-sys-color-primary); color: #0A0A0C; }
+:root[data-look="glow"] .send-tile-icon { width: 20px; height: 20px; background: transparent; border-radius: 0; }
+:root[data-look="glow"] .send-tile-icon svg { fill: currentColor; }
+/* Cards: no borders, big corners. */
+:root[data-look="glow"] :is(.hw-widget-card, .cat-grid-card, .pc-drive-row, .storage-device-card, .recent-card, .recent-empty-card, .recent-file-card,
+  .clean-card, .share-btn-card, .gaming-hero-card, .phone-permission-card, .mini-media-card, .usage-rows, .xfer-card,
+  .transfer-card-item, .device-row, .explorer-item, .phone-file-item, .phone-item-row, .file-row-item, .conn-row, .gm-card,
+  .more-me, .more-row, .xt-card, .send-tile, .phone-quick-btn, .settings-row, .perm-row, .pc-connection-banner-card, .saver-card) { border-color: transparent; box-shadow: none; }
+:root[data-look="glow"] :is(.more-me, .more-row, .xt-card, .pc-connection-banner-card, .saver-card) { border-radius: 22px; }
+:root[data-look="glow"] :is(.hw-icon-box, .conn-modal-icon-wrap, .perm-card-icon, .recent-card-icon, .clean-card-icon, .more-row-icon, .xt-icon,
+  .cat-grid-icon-box, .pc-conn-icon-halo) { background: #27272B; color: var(--md-sys-color-primary); }
+:root[data-look="glow"] .xt-bar { height: 8px; border-radius: 4px; background: #27272B; }
+:root[data-look="glow"] .xt-bar > div { border-radius: 4px; }
+:root[data-look="glow"] .xt-link { background: transparent; border: 1px solid var(--nl-accent); }
+:root[data-look="glow"] .xt-btn { background: #27272B; }
+:root[data-look="glow"] .xt-btn.ghost { background: transparent; border-color: #3F3F46; }
+:root[data-look="glow"] .xt-list { background: transparent; border: none; border-radius: 0; display: flex; flex-direction: column; gap: 8px; overflow: visible; }
+:root[data-look="glow"] .xt-row { background: var(--md-sys-color-surface); border: none; border-radius: 18px; }
+:root[data-look="glow"] .transfer-chip.active { background: var(--md-sys-color-primary); border-color: var(--md-sys-color-primary); color: #0A0A0C; }
+:root[data-look="glow"] .search-bar-pill { background: #17171A; border: 1px solid #27272B; box-shadow: none; }
+/* The bottom bar: a floating round bar; only the chosen tab shows its name. */
+:root[data-look="glow"] .material-bottom-nav { left: 16px; right: 16px; bottom: 12px; height: 60px; padding: 0 8px; border: 1px solid #27272B; border-radius: 30px; background: #17171A; justify-content: space-between; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); }
+:root[data-look="glow"] .nav-tab { flex: 0 1 auto; flex-direction: row; gap: 6px; height: 44px; min-width: 44px; padding: 0 12px; border-radius: 22px; }
+:root[data-look="glow"] .nav-icon-indicator { width: 20px; height: 20px; margin: 0; background: transparent; border-radius: 0; }
+:root[data-look="glow"] .nav-tab.active .nav-icon-indicator { background: transparent; }
+:root[data-look="glow"] .nav-icon-indicator svg { width: 20px; height: 20px; fill: #A1A1AA; }
+:root[data-look="glow"] .nav-tab .nav-label { display: none; font-size: 13px; font-weight: 600; }
+:root[data-look="glow"] .nav-tab.active { background: var(--md-sys-color-primary); padding: 0 16px 0 12px; }
+:root[data-look="glow"] .nav-tab.active .nav-icon-indicator svg { fill: #0A0A0C; }
+:root[data-look="glow"] .nav-tab.active .nav-label { display: inline; color: #0A0A0C; }
+:root[data-look="glow"] body { padding-bottom: 92px; }
+
+/* ---------------------------------------------------------------- 7. glass effect (glass.css) in these looks */
+:root[data-glass="on"][data-look="kit"] {
+  --glass-fill: rgba(255, 255, 255, 0.52);
+  --glass-fill-strong: rgba(255, 255, 255, 0.68);
+  --glass-edge: rgba(255, 255, 255, 0.85);
+  --glass-shadow: 0 8px 28px rgba(52, 87, 241, 0.10);
+  --glass-page: #EEF1FA;
+  --glass-backdrop:
+    radial-gradient(60% 40% at 12% 18%, rgba(99, 132, 255, 0.42), transparent 70%),
+    radial-gradient(55% 38% at 92% 34%, rgba(147, 130, 255, 0.30), transparent 70%),
+    radial-gradient(70% 45% at 30% 88%, rgba(96, 165, 250, 0.28), transparent 72%);
+}
+:root[data-glass="on"][data-look="paper"] {
+  --glass-fill: rgba(255, 255, 255, 0.60);
+  --glass-fill-strong: rgba(255, 255, 255, 0.76);
+  --glass-edge: rgba(17, 19, 24, 0.14);
+  --glass-shadow: none;
+  --glass-page: #F6F7F9;
+  --glass-backdrop:
+    radial-gradient(60% 40% at 10% 16%, rgba(37, 99, 235, 0.16), transparent 70%),
+    radial-gradient(60% 40% at 90% 84%, rgba(17, 19, 24, 0.10), transparent 72%);
+}
+:root[data-glass="on"][data-look="glow"] {
+  --glass-fill: rgba(39, 39, 43, 0.46);
+  --glass-fill-strong: rgba(18, 18, 20, 0.64);
+  --glass-edge: rgba(255, 255, 255, 0.12);
+  --glass-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+  --glass-page: #0A0A0C;
+  --glass-backdrop:
+    radial-gradient(60% 40% at 10% 16%, rgba(198, 242, 107, 0.22), transparent 70%),
+    radial-gradient(55% 38% at 94% 32%, rgba(94, 234, 212, 0.16), transparent 70%),
+    radial-gradient(70% 45% at 34% 90%, rgba(165, 180, 252, 0.16), transparent 72%);
+}
+/* The parts made by newlooks.js become panes of glass too (Paper's storages have no box, so they stay as they are). */
+:root[data-glass="on"]:is([data-look="kit"], [data-look="glow"]) :is(.nl-store, .nl-icon-btn:not(.nl-me)) {
+  background: var(--glass-fill);
+  -webkit-backdrop-filter: var(--glass-blur-soft);
+  backdrop-filter: var(--glass-blur-soft);
+  border: 1px solid var(--glass-edge);
+  box-shadow: var(--glass-shadow);
+}
+/* Kit: the three send tiles are panes themselves, so the card around them goes. */
+:root[data-glass="on"][data-look="kit"] .send-tiles { background: transparent; padding: 0; gap: 8px; }
+:root[data-glass="on"][data-look="kit"] .send-tile { padding: 14px 6px 12px; }
+/* Paper and Glow: the first send button stays the filled one (glass.css would make it a pane, and its text is the
+   colour of that pane). */
+:root[data-glass="on"][data-look="paper"] .send-tiles .send-tile:first-child { background: #111318 !important; border-color: #111318 !important; }
+:root[data-glass="on"][data-look="glow"] .send-tiles .send-tile:first-child { background: var(--md-sys-color-primary) !important; border-color: transparent !important; }
+/* Transfers. Paper's flat rows have no room inside for a pane's edge: as panes they get corners and padding. */
+:root[data-glass="on"][data-look="paper"] .xt-card { border-radius: 12px; padding: 12px 14px 8px; margin-bottom: 8px; }
+:root[data-glass="on"][data-look="paper"] .xt-list { border-radius: 12px; overflow: hidden; }
+:root[data-glass="on"][data-look="paper"] .xt-row { padding: 10px 14px; }
+/* Glow's finished rows are one pane together (glass.css takes the fill off the rows). */
+:root[data-glass="on"][data-look="glow"] .xt-list { border-radius: 22px; gap: 0; overflow: hidden; }

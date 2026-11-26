@@ -148,3 +148,57 @@
   Asli app (build 14:41 installed): "Check the speed now" → 8 line: key ok, cloud drive ok, Fast drive 200 files 0.1 s, opening a ready file 0.05 s, preparing folders ok, 3 "!" (Z: mara hua, log atka: restart tak).
 - **Summary of Changes:** app khud naapta hai (start + har 3 ghante + button) ki jo cheezein drive ko tez rakhti hain woh lagi hain aur asli samay theek hai; bigde to note + ghanti. Agents ke liye `RULE.md` hissa 10.
 - **Next Steps / Remaining Work:** restart ke baad check dobara (teeno "!" jaane chahiye); note wala raasta kabhi asli mein dekhna; CLI mein `/speed` (nahi bana).
+
+### [TASK-CLAUDE-APPS] "Apps" page: laptop ke apps apne aap list, ek click se chalu, laptop ⇄ cloud bhejna — Charan 1 + 2 COMPLETE (Charan 3 nahi bana)
+- **Date & Time:** 2026-11-25 18:46 → 19:50
+- **Agent & Model:** Claude Code (Claude Fable 5.2)
+- **Prompt:** "koi bhi app me direct aapana cloud ssd se louach kar saku … abhi game ke liye file location dalna padta hai … jo bhi app hai wo laptop se lekar aapan app se use kar saku"; phir jawab: "game ka file or data cloudssd me rahe … jab chahiye app ko laptop se cloud or cloud se laptop me dal du … storage or ram kam use ho". Plan pehle dikhaya, user ne manzoor kiya.
+- **Files Inspected:** `RULE.md`, `docs/{CHALU_KAAM,CLAUDE}.md`, `src/CloudSSD.App/{AppHost,InstalledPrograms,ShellShortcut,SmartStorageOffloaderService,GameMode}.cs`, `src/CloudSSD.Games/{GameModels,GameLauncher,GameLibrary}.cs`,
+  `src/CloudSSD.Desktop/{MainWindow.xaml,MobileThumbnailer.cs,LocalizationManager.Devices.cs}`, `ViewModels/{MainViewModel,GameLibraryViewModel,Common}.cs`, `Views/{GameLibraryView.xaml,GameSettingsWindow.xaml.cs,MemoryView.xaml}`, `tools/live-test/pc-shot.ps1`
+- **Files Created / Modified:** naye `src/CloudSSD.App/{AppCatalog,AppMover}.cs`, `src/CloudSSD.Desktop/{AppIcons.cs,LocalizationManager.Apps.cs}`, `src/CloudSSD.Desktop/ViewModels/AppsViewModel.cs`,
+  `src/CloudSSD.Desktop/Views/AppsView.xaml(.cs)`, `tests/CloudSSD.Tests/{AppCatalogTests,AppMoverTests}.cs`; badle `src/CloudSSD.App/AppHost.cs` (`AppMover`, `LaunchAppAsync`, `GameFor`),
+  `src/CloudSSD.Desktop/ViewModels/{MainViewModel,GameLibraryViewModel}.cs`, `src/CloudSSD.Desktop/MainWindow.xaml`, `src/CloudSSD.Desktop/Views/GameSettingsWindow.xaml.cs`,
+  `src/CloudSSD.Desktop/LocalizationManager.Devices.cs` (2 Merge line), `docs/{CHALU_KAAM,CLAUDE}.md`. `App.xaml.cs` nahi chhua. Mount ke flag / cache / Fast drive nahi chhue (Speed Lock).
+- **Backup Folder:** `backup/2026-11-25_1846_apps-page-list-launch-move` (before + complete + README)
+- **Validation Result:** APPROVED (`backup.ps1 validate`, 19:45) — build 0 warning / 0 error, C# 692/692 (31 naye).
+  **Asli PC (build 19:36 installed):** Apps page par 11 program apne aap (icon, size, "On this PC / On the cloud drive"), search, "Open" se Inno Setup khula (log: "Started … from the Apps page").
+  **Asli move (300 KB test app, asli Google Drive):** Move to cloud → rclone `sync/copy` → `operations/size` se ginti mili → Windows ka UAC "Yes" (user ne dabaya) → folder ki jagah symlink `%USERPROFILE%\CloudSSD-TestApp → Z:\Apps\CloudSSD-TestApp`,
+  purane Start menu shortcut se khula → Bring back (cloud copy na rakhna) → asli folder wapas, teeno files, record khali. Test app aur uske cloud folder baad mein hata diye.
+  **Nahi jaancha:** "Play as game" asli app par (game mode user ke chalte apps RAM se hatata / band karta hai; sirf unit test `Play_as_game_makes_one_library_entry…`), bada (GB) move, `Program Files` wala app (app admin nahi tha: "Windows protects this folder" aata hai), move ke beech bijli jana (sirf unit test), Hinglish / Hindi mein page (app English par tha).
+- **Summary of Changes:**
+  1. **Apps page** (sidebar, Games ke neeche): Start menu + Desktop ke shortcut (`WScript.Shell`), "Installed apps" se size / folder, cloud drive ka `Apps\*`. Uninstaller / readme / Windows ke tools chhante jaate hain. "Open" = Start menu jaisa; "Play as game" = `PlayAsync` (game mode, RAM, upload dheema) ek FullLocal library entry ke saath.
+  2. **Move to cloud / Bring back to this PC** (`AppMover`): pehle copy (rclone se seedha cloud, cache ke raaste nahi) → ginti + size milaan → folder `…​.cloudssd-old` → symlink → exe link se padha → tabhi purana delete. Har charan `apps-moved.json` mein; adhoora move agle start par wapas hota hai.
+     Wapas: `….cloudssd-new` mein copy → milaan → link hata kar asli folder; poochhta hai cloud ki copy rakhein ya nahi.
+  3. Library mein laptop wali entry (`MountId = ""`, FullLocal) ab "missing drive" nahi dikhati; Prepare / Re-analyze saaf mana karte hain; Game settings mein exe ki list `LocalRoot` se.
+- **Raaste mein mila:**
+  - Is PC par Developer Mode band hai aur junction cloud drive tak nahi banta ("Local volumes are required"), isliye link ke liye app ek baar UAC wala `mklink /D` chalata hai.
+  - `operations/purge` ke baad Z: par folder dikhta raha (drive 72 ghante folder list yaad rakhta hai) → ab `vfs/forget` + `vfs/refresh` upar wale folder par.
+  - Isi session mein pehle (code nahi badla): bade upload isliye fail the ki teeno account phir shared Google key par hain (403), 10 GB ki 867 files upload line mein atki thin (ab `%USERPROFILE%\Cloud-SSD-atki-files` mein rakhi hain), aur hotspot ka upload ~0.4 Mbps tha. Key ki file cloud se nikaal kar Downloads mein rakhi hai.
+- **Next Steps / Remaining Work:** user: Cloud Drives → "Switch to my own Google key" (abhi tak nahi hua). Charan 3 (Steam / Epic ke games list mein) nahi bana: is PC par dono nahi hain, jaanch nahi ho sakti thi.
+  Baad mein: `Program Files` ke app ke liye rename bhi UAC se, mover ke sandesh Hinglish / Hindi mein (abhi English), phone aur CLI se apps list. Commit / push nahi hua (user ne nahi kaha).
+
+### [TASK-CLAUDE-APPS-2] Cloud wala program "Open" karne par app ki window atakti thi — FIX BANA, INSTALL BAAKI (PC restart ke baad)
+- **Date & Time:** 2026-11-25 20:00 → 20:30
+- **Agent & Model:** Claude Code (Claude Fable 5.2)
+- **Prompt:** "eak bar antigraviyt ya minimax ka test karo deko work karta hai ki nahi wo"
+- **Files Created / Modified:** `src/CloudSSD.Desktop/ViewModels/AppsViewModel.cs` (Open / Play as game ab `Task.Run` mein + "cloud se laya ja raha hai" sandesh), `src/CloudSSD.Desktop/LocalizationManager.Apps.cs` (1 naya shabd, dono bhasha), `docs/{CLAUDE,CHALU_KAAM}.md`
+- **Backup Folder:** `backup/2026-11-25_2012_apps-open-from-cloud-froze-window` (sirf `before/`: asli jaanch baaki, isliye `complete` nahi)
+- **Validation Result:** PARTIALLY_VALIDATED — build 0 warning / 0 error, C# 692/692, release bana (`dist\Cloud-SSD-0.9.0-win-x64`, setup SHA256 `a8033b77…a55e0af`). **Install nahi hua.**
+- **Asli jaanch (19:36 wale build par):**
+  - Antigravity (laptop par, chal raha tha): Apps → Open → "Antigravity is starting." + log "Started Antigravity from the Apps page" (ek hi instance wala app, naya process nahi bana). Move to cloud → "Antigravity is running from it. Close it first.", folder chhua nahi gaya. **Theek.**
+  - MiniMax Code (`Z:\MiniMax Code\MiniMax Code.exe`, 224.5 MB, cloud par): Apps → Open → **Cloud-SSD ki window atak gayi**. Wajah: Windows program chalane se pehle poori exe padhta hai; internet 0.4 Mbps tha (6 min mein ~34 MB, kul 52.5 MB aaya), aur `AppCatalog.Start` UI thread par chal raha tha. MiniMax khula nahi.
+- **Ab ki haalat (zaroori):** ataka hua `Cloud-SSD.exe` (PID 20292) `Stop-Process` / `taskkill /F` se nahi jata ("could not be terminated"): 1 thread Windows ke andar Z: ki read par atka hai (17 Nov wali wahi dikkat). Wo single-instance mutex aur install folder pakde hai, isliye naya app "already running" bol kar band ho jata hai aur installer mana karta hai. Z: / Y: drives File Explorer mein chal rahi hain (rclone alag process hai).
+- **Next Steps:** user ki haan par **PC restart** → `dist\Cloud-SSD-0.9.0-win-x64\Install-CloudSSD.ps1 -Quiet -DesktopShortcut` → Apps → MiniMax → Open: window chalti rahe, upar "is being fetched from the cloud drive…" dikhe → phir `backup.ps1 validate` + `complete`. Tez internet par MiniMax ka asli khulna bhi dekhna.
+
+### [TASK-CLAUDE-OFFLINE-XFER] Phone ↔ PC transfer bina internet, badi file wahin se aage — CODE DONE, asli phone jaanch baaki
+- **Date & Time:** 2026-11-25 19:19 → 2026-11-26 08:05
+- **Agent & Model:** Claude Code (Claude Fable 5.2)
+- **Prompt:** "cloud par file upload ke liye internet lage par laptop se phone or phone se laptop ke bich jab transfer ke liye internet na lage wo offline ho" (pehle: "badi file send karta hu to fail kar raha hai")
+- **Files Inspected:** `src/CloudSSD.App/LocalMobileBridgeService.{Upload,Files,Share,Peer,Backup}.cs`, `LocalMobileBridgeService.cs`, `mobile-android/.../{TransferHub,Uploader,PcLink,LinkScanner,TransferService,MainActivity,Backends}.java`, `tests/CloudSSD.Tests/MobileBridgeResumeTests.cs`, app + rclone logs
+- **Files Created / Modified:** `src/CloudSSD.App/LocalMobileBridgeService.Upload.cs`, `.Files.cs`, `.Share.cs`, `LocalMobileBridgeService.cs` (purana /api/upload: sirf read call), `mobile-android/src/main/java/com/cloudssd/mobile/{TransferHub,PcLink,LinkScanner,Uploader,TransferService}.java`, `mobile-android/src/main/AndroidManifest.xml`, `tests/CloudSSD.Tests/MobileBridgeResumeTests.cs`, `docs/{CHALU_KAAM,CLAUDE}.md`
+- **Backup Folder:** `backup/2026-11-25_1919_phone-pc-transfer-bina-internet` (sirf `before/`; `complete` asli jaanch ke baad)
+- **Validation Result:** PARTIALLY_VALIDATED — build 0 warning / 0 error, C# 691/691 (2 naye test), APK compile + sign hua (wahi signer, versionCode 7). PC build installed aur chal raha hai (26 Nov 07:57). **Nahi jaancha:** naya APK phone par, asli badi file (2 GB) dono taraf, hotspot IP badalne par khud dhoondhna, screen band. JS tests is baar nahi chale (JS badla nahi).
+- **Summary of Changes:** PC: usi upload id ki nayi request purani chup request se kaam le leti hai, 409 mein asli `offset`, 60 s tak data na aaye to request chhoot jati hai (`UploadIdleTimeout`), upload / send ki log lines (bina file naam). Phone: PC ke liye bheji file ab Google Drive par nahi jaati (`forCloudFolder`), PC ka naya address link par khud dhoondhta hai (`PcLink.findOnLinks` + `LinkScanner.listening`, 60 s mein ek baar, PC ko apni pehchaan saabit karni hoti hai), 409 bina offset = PC se poochho, tooti connection par wahin se aage (3 baar), transfer ke waqt WakeLock + WifiLock.
+- **Plan se alag:** `MainActivity.runDiscovery` nahi badla (naya scan alag likha); `held` transfer ke waqt service zinda rakhna nahi kiya (Android ki 6 ghante ki seema khatam ho jati).
+- **Raaste mein mila:** (1) `cpx stop` ke baad app Windows mein atak gaya (kill nahi hota; ghanton baad khud hata). (2) Mirror ka `rclone copy C:\ …` app band hone par lawaris reh jata hai, har restart par ek aur (3 ek saath mile) — bug, theek nahi kiya. (3) Is PC par teeno Google account shared key par hain; key file `Downloads` mein rakh di, sign-in user ka. (4) 10 GB atki upload line `%USERPROFILE%\Cloud-SSD-atki-files` mein rakhi.
+- **Next Steps / Remaining Work:** phone par APK install (offer bheja: `Downloads\Cloud-SSD-Mobile-naya.apk`), plan ki asli jaanch, phir `backup.ps1 complete`. Android tools: `%USERPROFILE%\Android-tools` (`build-apk.ps1 -Sdk ...\Sdk -Jdk ...\jdk-17.0.21.1+2`). Push nahi hua.

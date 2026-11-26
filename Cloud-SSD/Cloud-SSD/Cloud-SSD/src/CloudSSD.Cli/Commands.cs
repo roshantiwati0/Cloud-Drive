@@ -49,6 +49,7 @@ public static class CommandCatalog
         new("phone", ["devices", "p"], "", "Phones paired with this PC", "Phones", "Looking for phones"),
         new("ls", ["dir", "list"], "<folder>", "What is inside a folder (Z:\\Games, D:\\, downloads)", "Folder", "Reading the folder"),
         new("find", ["search"], "<name> [in <folder>]", "Find files by name on the cloud drives", "Find", "Searching"),
+        new("gemini", ["ai"], "<summary|ask|tags|test> [file] [q]", "Gemini AI assistant: file summaries, Q&A, and tags", "Gemini AI", "Analyzing with Gemini"),
         new("copy", ["cp"], "<from> <to>", "Copy a file or folder with progress (never overwrites)", "Copy", "Copying"),
         new("send", [], "<file> [to <phone>]", "Send a file or folder from this PC to your phone", "Send", "Offering it to the phone"),
         new("cache", ["c"], "", "Space on this PC that makes cloud files open fast", "Cache", "Measuring the cache"),

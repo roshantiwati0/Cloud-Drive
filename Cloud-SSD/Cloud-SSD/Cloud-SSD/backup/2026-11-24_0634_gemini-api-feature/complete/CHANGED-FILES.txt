@@ -1,0 +1,26 @@
+﻿Work finished: 2026-11-24 07:48
+
+NEW files (5):
+  src\CloudSSD.App\Gemini\GeminiService.cs
+  src\CloudSSD.App\LocalMobileBridgeService.Gemini.cs
+  src\CloudSSD.Cli\GeminiCli.cs
+  src\CloudSSD.Desktop\Views\GeminiInsightsWindow.cs
+  tests\CloudSSD.Tests\GeminiServiceTests.cs
+
+CHANGED files (11):
+  mobile-android\src\main\assets\fs.js
+  src\CloudSSD.App\AppHost.cs
+  src\CloudSSD.App\LocalMobileBridgeService.Cli.cs
+  src\CloudSSD.App\LocalMobileBridgeService.cs
+  src\CloudSSD.Cli\Commands.cs
+  src\CloudSSD.Cli\Program.cs
+  src\CloudSSD.Core\Settings.cs
+  src\CloudSSD.Desktop\ViewModels\ConfigViewModels.cs
+  src\CloudSSD.Desktop\Views\SettingsView.xaml
+  src\CloudSSD.Desktop\Views\SsdFilesView.cs
+  src\CloudSSD.Desktop\wwwroot\mobile\fs.js
+
+REMOVED files (0):
+
+The finished version of every new and changed file is in complete\files\ (same path as in the project).
+To go back to how it was: copy the same paths from before\ over the project, and delete the NEW files.

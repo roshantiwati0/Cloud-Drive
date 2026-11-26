@@ -139,6 +139,19 @@
                         </StackPanel>
                     </Border>
                 </UniformGrid>
+                <Border Style="{StaticResource Card}" Margin="0,14,0,0">
+                    <StackPanel>
+                        <TextBlock Text="✨ Gemini AI Assistant" Style="{StaticResource H2}" />
+                        <TextBlock Text="API KEY (from Google AI Studio - https://aistudio.google.com/apikey)" Style="{StaticResource Label}" Margin="0,8,0,4" />
+                        <DockPanel Margin="0,0,0,10">
+                            <Button Content="Test Connection" Command="{Binding TestGeminiConnectionCommand}" Padding="14,4" DockPanel.Dock="Right" Margin="10,0,0,0" />
+                            <TextBox Text="{Binding GeminiApiKey, UpdateSourceTrigger=PropertyChanged}" />
+                        </DockPanel>
+                        <TextBlock Text="MODEL (e.g. gemini-4-hydrogen, gemini-3.5-flash-lite)" Style="{StaticResource Label}" Margin="0,4,0,4" />
+                        <TextBox Text="{Binding GeminiModel, UpdateSourceTrigger=PropertyChanged}" Width="240" HorizontalAlignment="Left" Margin="0,0,0,8" />
+                        <TextBlock Text="{Binding GeminiStatusText}" Style="{StaticResource Caption}" />
+                    </StackPanel>
+                </Border>
             </StackPanel>
         </ScrollViewer>
 

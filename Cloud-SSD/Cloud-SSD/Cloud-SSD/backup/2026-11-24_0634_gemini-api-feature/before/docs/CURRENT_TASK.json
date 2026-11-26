@@ -1,0 +1,14 @@
+﻿{
+    "active":  true,
+    "taskId":  "TASK-CLAUDE-CLI-TUI-3",
+    "taskTitle":  "cli-key-problem-live-files",
+    "agent":  "Claude Code",
+    "startTime":  "2026-11-17T02:57:16.0987793+05:30",
+    "backupFolder":  "2026-11-17_0257_cli-key-problem-live-files",
+    "targetFiles":  [
+                        "src/CloudSSD.Cli/*",
+                        "tests/CloudSSD.Tests/CliTuiTests.cs",
+                        "src/CloudSSD.App/LocalMobileBridgeService.*"
+                    ],
+    "status":  "IN_PROGRESS"
+}

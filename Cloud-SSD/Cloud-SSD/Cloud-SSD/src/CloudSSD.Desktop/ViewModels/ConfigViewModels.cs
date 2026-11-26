@@ -402,6 +402,10 @@ public sealed partial class SettingsViewModel : PageViewModel
     [ObservableProperty] private string _chunkStreams = "0";
     [ObservableProperty] private string _writeBackSeconds = "5";
     [ObservableProperty] private string _dataRoot = "";
+    [ObservableProperty] private string _geminiApiKey = "";
+    [ObservableProperty] private string _geminiModel = "gemini-4-hydrogen";
+    [ObservableProperty] private string _geminiStatusText = "";
+    [ObservableProperty] private bool _geminiTesting;
 
     public override void OnShown()
     {
@@ -430,6 +434,11 @@ public sealed partial class SettingsViewModel : PageViewModel
         ChunkStreams = s.Cache.ReadChunkStreams.ToString();
         WriteBackSeconds = s.Cache.WriteBack.TotalSeconds.ToString("0");
         DataRoot = Host.Paths.DataRoot;
+        GeminiApiKey = s.Gemini.ApiKey ?? "";
+        GeminiModel = s.Gemini.Model;
+        GeminiStatusText = Host.Gemini.IsConfigured
+            ? $"Configured (model: {Host.Gemini.Model})"
+            : "No API key saved (reading GEMINI_API_KEY environment variable if set).";
         Accelerator.OnShown();
         Performance.OnShown();
         Diagnostics.OnShown();
@@ -476,6 +485,8 @@ public sealed partial class SettingsViewModel : PageViewModel
             s.Cache.ReadChunkSizeBytes = Math.Clamp(cs, 256 * ByteSize.KiB, 2 * ByteSize.GiB);
             s.Cache.ReadChunkStreams = (int)Parse(ChunkStreams, 0, 64, "Chunk streams");
             s.Cache.WriteBack = TimeSpan.FromSeconds(Parse(WriteBackSeconds, 0, 3600, "Write-back delay"));
+            s.Gemini.ApiKey = string.IsNullOrWhiteSpace(GeminiApiKey) ? null : GeminiApiKey.Trim();
+            s.Gemini.Model = string.IsNullOrWhiteSpace(GeminiModel) ? "gemini-4-hydrogen" : GeminiModel.Trim();
         }
         catch (FormatException e)
         {
@@ -502,6 +513,28 @@ public sealed partial class SettingsViewModel : PageViewModel
 
     [RelayCommand]
     private void OpenDataFolder() => Process.Start(new ProcessStartInfo("explorer.exe", Host.Paths.DataRoot) { UseShellExecute = true });
+
+    [RelayCommand]
+    private async Task TestGeminiConnection()
+    {
+        GeminiTesting = true;
+        GeminiStatusText = "Testing connection to Gemini API...";
+        try
+        {
+            bool ok = await Host.Gemini.TestConnectionAsync(GeminiApiKey, GeminiModel);
+            GeminiStatusText = ok
+                ? "Connection successful! Model responded."
+                : "Connection failed. Please check the API key.";
+        }
+        catch (Exception ex)
+        {
+            GeminiStatusText = "Error: " + ex.Message;
+        }
+        finally
+        {
+            GeminiTesting = false;
+        }
+    }
 }
 
 public sealed record LogRow(string Time, string Level, string Tone, string Source, string Message);

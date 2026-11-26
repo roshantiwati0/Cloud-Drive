@@ -125,6 +125,10 @@ public static class Program
                 return Files.Find(o, paths, query, where, ct, progress);
             }
 
+            case "gemini":
+            case "ai":
+                return await GeminiCli.RunAsync(args, paths, o, err, ct);
+
             case "copy":
                 if (args.Length < 3) return NeedsArgument(err, "copy", "<from> <to>", "e.g. /copy \"Z:\\Games\\game.zip\" downloads");
                 return await Files.CopyAsync(o, args[1], args[2], ct, progress);

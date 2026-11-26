@@ -1,0 +1,9 @@
+﻿Work: fix-gemini-fstarget-compile
+Agent: Antigravity
+TaskId: TASK-AGY-BUILD-001
+Source as it was before the work started: 656 files, 13.4 MB.
+Taken: 2026-11-24 06:59
+
+The folder "before" is never changed. When the work is ready, run:
+  tools\backup\backup.ps1 complete -Folder "2026-11-24_0659_fix-gemini-fstarget-compile"
+and write complete\README.md.

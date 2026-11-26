@@ -471,6 +471,9 @@ public sealed partial class LocalMobileBridgeService : IAsyncDisposable
         // File management on the cloud drives (/api/fs/*, /api/backup/*) lives in LocalMobileBridgeService.Files.cs.
         if (await TryHandleFsRouteAsync(method, path, queryParams, headers, stream, clientIp, ct)) return;
 
+        // Gemini AI assistant routes (/api/gemini/*)
+        if (await TryHandleGeminiRouteAsync(method, path, queryParams, headers, stream, ct)) return;
+
         // Routes added for the newer phone app; the list below is the original set.
         if (await TryHandleExtraRouteAsync(method, path, queryParams, headers, stream, clientIp, ct)) return;
 

@@ -1,0 +1,73 @@
+namespace CloudSSD.Desktop;
+
+/// <summary>Text for per-device permissions: the request window, the editor and the notes, in Hinglish and Hindi.</summary>
+public static partial class LocalizationManager
+{
+    public static readonly IReadOnlyDictionary<string, string> PermissionTextsHinglish = new Dictionary<string, string>
+    {
+        ["Browse the drives and folders"] = "Drives aur folders dekhna",
+        ["Open, play and download files"] = "Files kholna, chalana aur download karna",
+        ["Send files and photo backups to this PC"] = "Is PC pe files aur photo backup bhejna",
+        ["Change files: new folders, rename, move, delete"] = "Files badalna: naya folder, naam badalna, move, delete",
+        ["Gaming HUD and the PC remote"] = "Gaming HUD aur PC remote",
+        ["Control this PC: drives, clean-up, game saves"] = "Is PC ko chalana: drives, safai, game saves",
+        ["See Space & RAM"] = "Space & RAM dekhna",
+        ["See phones' files through this PC"] = "Is PC ke zariye phones ki files dekhna",
+        ["Play PC games on the device"] = "Device pe PC games khelna",
+        ["Access request"] = "Access ki request",
+        ["{0} wants to:"] = "{0} ye karna chahta hai:",
+        ["It says: “{0}”"] = "Wo kehta hai: “{0}”",
+        ["Allow only a device you know. You can take it back any time in Devices → Permissions."] = "Sirf jaane-pehchaane device ko allow karo. Kabhi bhi Devices → Permissions me wapas le sakte ho.",
+        ["Answer within {0}"] = "{0} me jawab do",
+        ["Deny"] = "Mana karo",
+        ["Until Cloud-SSD restarts"] = "Cloud-SSD restart hone tak",
+        ["For 1 hour"] = "1 ghante ke liye",
+        ["Always"] = "Hamesha",
+        ["What may {0} do?"] = "{0} kya kar sakta hai?",
+        ["It just paired with this PC. Untick what it should not do; it can ask later, and you answer here."] = "Ye abhi is PC se juda hai. Jo nahi karna chahiye uska tick hatao; baad me wo pooch sakta hai, aur aap yahin jawab doge.",
+        ["Ticked = allowed. A switch that is off in Devices → Permissions stops it for every device."] = "Tick = allowed. Devices → Permissions me jo switch off hai, wo har device ke liye band hai.",
+        ["off for every device"] = "har device ke liye off",
+        ["for 1 hour · until {0}"] = "1 ghante ke liye · {0} tak",
+        ["until Cloud-SSD restarts"] = "Cloud-SSD restart hone tak",
+        ["Recent access"] = "Haal ka access",
+        ["Nothing opened yet."] = "Abhi tak kuch nahi khola.",
+        ["Refused"] = "Mana kiya",
+        ["Switches for every device"] = "Har device ke switches",
+        ["{0} asks for access"] = "{0} access maang raha hai",
+        ["Open Cloud-SSD to answer within 2 minutes."] = "2 minute me jawab dene ke liye Cloud-SSD kholo.",
+    };
+
+    public static readonly IReadOnlyDictionary<string, string> PermissionTextsHindi = new Dictionary<string, string>
+    {
+        ["Browse the drives and folders"] = "ड्राइव और फ़ोल्डर देखना",
+        ["Open, play and download files"] = "फ़ाइलें खोलना, चलाना और डाउनलोड करना",
+        ["Send files and photo backups to this PC"] = "इस पीसी पर फ़ाइलें और फ़ोटो बैकअप भेजना",
+        ["Change files: new folders, rename, move, delete"] = "फ़ाइलें बदलना: नया फ़ोल्डर, नाम बदलना, ले जाना, हटाना",
+        ["Gaming HUD and the PC remote"] = "गेमिंग HUD और पीसी रिमोट",
+        ["Control this PC: drives, clean-up, game saves"] = "इस पीसी को चलाना: ड्राइव, सफ़ाई, गेम सेव",
+        ["See Space & RAM"] = "स्पेस और RAM देखना",
+        ["See phones' files through this PC"] = "इस पीसी के ज़रिए फ़ोन की फ़ाइलें देखना",
+        ["Play PC games on the device"] = "डिवाइस पर पीसी गेम खेलना",
+        ["Access request"] = "एक्सेस का अनुरोध",
+        ["{0} wants to:"] = "{0} यह करना चाहता है:",
+        ["It says: “{0}”"] = "वह कहता है: “{0}”",
+        ["Allow only a device you know. You can take it back any time in Devices → Permissions."] = "केवल जाने-पहचाने डिवाइस को अनुमति दें। आप कभी भी डिवाइस → अनुमतियाँ में वापस ले सकते हैं।",
+        ["Answer within {0}"] = "{0} में जवाब दें",
+        ["Deny"] = "मना करें",
+        ["Until Cloud-SSD restarts"] = "Cloud-SSD दोबारा शुरू होने तक",
+        ["For 1 hour"] = "1 घंटे के लिए",
+        ["Always"] = "हमेशा",
+        ["What may {0} do?"] = "{0} क्या कर सकता है?",
+        ["It just paired with this PC. Untick what it should not do; it can ask later, and you answer here."] = "यह अभी इस पीसी से जुड़ा है। जो नहीं करना चाहिए उसका टिक हटाएँ; बाद में यह पूछ सकता है, और आप यहीं जवाब देंगे।",
+        ["Ticked = allowed. A switch that is off in Devices → Permissions stops it for every device."] = "टिक = अनुमति। Devices → Permissions में बंद स्विच हर डिवाइस के लिए बंद है।",
+        ["off for every device"] = "हर डिवाइस के लिए बंद",
+        ["for 1 hour · until {0}"] = "1 घंटे के लिए · {0} तक",
+        ["until Cloud-SSD restarts"] = "Cloud-SSD दोबारा शुरू होने तक",
+        ["Recent access"] = "हाल का एक्सेस",
+        ["Nothing opened yet."] = "अभी तक कुछ नहीं खोला।",
+        ["Refused"] = "मना किया",
+        ["Switches for every device"] = "हर डिवाइस के स्विच",
+        ["{0} asks for access"] = "{0} एक्सेस माँग रहा है",
+        ["Open Cloud-SSD to answer within 2 minutes."] = "2 मिनट में जवाब देने के लिए Cloud-SSD खोलें।",
+    };
+}

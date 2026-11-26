@@ -1,0 +1,278 @@
+/* =============================================================================================================
+   Pages and compact sizes (the design the user approved, "Cloud-SSD Phone Pages").
+
+   1. Every sheet opens as a full page, like any phone app: it fills the screen, slides in from the right, and has a
+      bar at the top with a back arrow (pages.js adds it) and the title. Only "Are you sure?" stays a small box.
+   2. Compact sizes: a slimmer search bar and bottom bar, smaller tile and category cards.
+   Loaded after app.css and looks.css; colours come from the look's tokens.
+   ============================================================================================================= */
+
+/* ---------------------------------------------------------------- 1. the page */
+.as-page {
+  inset: 0 !important;
+  padding: 0 !important;
+  background: var(--md-sys-color-background) !important;
+  backdrop-filter: none !important;
+  align-items: stretch !important;
+  justify-content: stretch !important;
+}
+.as-page > :first-child {
+  width: 100% !important;
+  max-width: none !important;
+  height: 100% !important;
+  max-height: none !important;
+  margin: 0 !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  background: var(--md-sys-color-background) !important;
+  padding: 0 16px calc(24px + env(safe-area-inset-bottom, 0px)) 16px !important;
+  box-sizing: border-box;
+  overflow-y: auto;
+  transform: none !important;
+  -webkit-overflow-scrolling: touch;
+}
+.as-page.active > :first-child { animation: page-in 0.22s cubic-bezier(0.2, 0, 0, 1); }
+@keyframes page-in { from { transform: translateX(28px); opacity: 0; } to { transform: none; opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .as-page.active > :first-child { animation: none; } }
+.as-page .m3-drag-handle { display: none !important; }
+/* The profile menu was a small card at the top right: now a page too. */
+.profile-menu-backdrop.as-page.active > .profile-menu-card { animation: page-in 0.22s cubic-bezier(0.2, 0, 0, 1); }
+
+/* ---------------------------------------------------------------- 2. the bar at the top */
+.page-bar {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  display: flex !important;
+  align-items: center;
+  gap: 6px !important;
+  min-height: 56px;
+  box-sizing: border-box;
+  margin: 0 -16px 12px -16px !important;
+  padding: 6px 12px 6px 4px !important;
+  background: var(--md-sys-color-surface);
+  border-bottom: 1px solid var(--look-line, var(--divider)) !important;
+}
+.page-back {
+  flex: none;
+  width: 44px;
+  height: 44px;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  cursor: pointer;
+}
+.page-back svg { width: 24px; height: 24px; fill: var(--md-sys-color-on-surface); }
+.page-back:active { background: var(--look-tint, rgb(var(--ink) / 0.08)); }
+.page-bar-title {
+  flex: 1;
+  min-width: 0;
+  margin: 0 !important;
+  font-size: 18px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+  color: var(--md-sys-color-on-surface) !important;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* The old headers inside the bar: no big icon, no X (the arrow closes), the title at bar size. */
+.page-bar .conn-modal-icon-wrap,
+.page-bar .conn-modal-close { display: none !important; }
+.page-bar .conn-modal-header-info { flex: 1; min-width: 0; }
+.page-bar .conn-modal-title { font-size: 18px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.page-bar .conn-modal-sub { font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.page-bar .m3-sheet-file-icon { width: 36px; height: 36px; flex: none; }
+.page-bar .m3-sheet-file-details { flex: 1; min-width: 0; }
+.page-bar .m3-sheet-file-name { font-size: 16px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.page-bar .m3-sheet-file-meta { font-size: 12px; }
+.page-bar .profile-menu-who { flex: 1; min-width: 0; }
+.page-bar .profile-menu-avatar { width: 36px; height: 36px; font-size: 15px; flex: none; }
+/* The access, permission and inbox pages: their line under the title sits below the bar. */
+.as-page .access-head { padding: 0 2px 10px 2px; }
+/* The photo viewer keeps its own back arrow, on a dark page. */
+#file-viewer-modal.as-page { background: #000 !important; }
+#file-viewer-modal.as-page > .viewer-modal-card { background: #000 !important; padding: 0 0 16px 0 !important; display: flex; flex-direction: column; }
+#file-viewer-modal .page-bar { margin: 0 0 8px 0 !important; background: rgb(0 0 0 / 0.6); border-bottom-color: rgb(255 255 255 / 0.12) !important; color: #fff; }
+#file-viewer-modal .page-bar svg { fill: #fff; }
+/* Lists inside pages: rows keep the look's card shape. */
+.as-page .m3-sheet-list,
+.as-page .perm-list,
+.as-page .inbox-list,
+.as-page .access-list { background: transparent; }
+.as-page .m3-sheet-row { min-height: 52px; border-radius: 14px; padding: 10px 12px; }
+
+/* ---------------------------------------------------------------- 3. compact sizes */
+.search-bar-pill { height: 44px; }
+.profile-avatar { width: 32px; height: 32px; font-size: 13px; }
+.material-bottom-nav { height: 64px; }
+.nav-icon-indicator { width: 56px; height: 28px; margin-bottom: 2px; }
+.nav-label { font-size: 11px; }
+body { padding-bottom: 76px; }
+:root[data-look="raat"] .material-bottom-nav { height: 60px; }
+:root[data-look="raat"] body { padding-bottom: 92px; }
+.hw-widget-card { padding: 12px; }
+.hw-widget-top { margin-bottom: 8px; }
+.hw-icon-box { width: 32px; height: 32px; }
+.hw-icon-box svg { width: 18px; height: 18px; }
+.cat-grid-card { padding: 12px; }
+.cat-grid-icon-box { width: 38px; height: 38px; margin-bottom: 8px; }
+.cat-grid-icon-box svg { width: 20px; height: 20px; }
+.quick-chip-btn { padding: 8px 14px; }
+.section-header { margin-bottom: 8px; }
+
+/* ---------------------------------------------------------------- 4. fixes seen on the phone */
+/* "Another PC or a new address" on the Connection page was a grey box that looked switched off. */
+.as-page .conn-settings-fold {
+  background: var(--md-sys-color-surface) !important;
+  border: 1px solid var(--look-line, var(--divider)) !important;
+  border-radius: 18px;
+}
+.as-page .conn-settings-fold .drive-btn.browse {
+  background: var(--look-tint, rgb(var(--ink) / 0.06));
+  color: var(--md-sys-color-on-primary-container);
+  border-color: transparent;
+}
+/* Row lines broke words in the middle ("withou / t"): break between words, and inside a word only if it is too long. */
+.m3-sheet-row-sub { word-break: normal; overflow-wrap: anywhere; }
+
+/* The peer sheet: "Let it add files and folders too". */
+.peer-write-row { display: flex; align-items: center; gap: 10px; padding: 12px 4px; font-size: 14px; color: var(--md-sys-color-on-surface); }
+.peer-write-row input { width: 20px; height: 20px; accent-color: var(--md-sys-color-primary); }
+
+/* ---------------------------------------------------------------- 5. Transfers page (transfers.js) */
+.xt-tabs { margin: 0 0 4px 0; }
+.xt-section { font-size: 12px; font-weight: 600; letter-spacing: 0.3px; text-transform: uppercase; color: var(--dim); margin: 14px 2px 8px; }
+.xt-card { background: var(--md-sys-color-surface); border: 1px solid var(--look-line, var(--divider)); border-radius: 18px; padding: 14px; margin-bottom: 10px; }
+:root[data-look="ac"] .xt-card { border-color: transparent; box-shadow: 0 6px 20px rgba(15, 23, 42, 0.06); }
+.xt-top { display: flex; align-items: center; gap: 10px; }
+.xt-icon { width: 38px; height: 38px; border-radius: 50%; background: var(--look-tint, var(--md-sys-color-primary-container)); display: flex; align-items: center; justify-content: center; flex: none; }
+.xt-icon svg { width: 18px; height: 18px; fill: none; stroke: var(--md-sys-color-primary); stroke-width: 2.2; stroke-linecap: round; }
+.xt-names { flex: 1; min-width: 0; }
+.xt-title { font-size: 15px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--md-sys-color-on-surface); }
+.xt-row-title { font-size: 14px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--md-sys-color-on-surface); }
+.xt-sub { font-size: 12px; color: var(--dim); }
+.xt-sub.bad { color: var(--warning); }
+.xt-current { margin-top: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.xt-link { flex: none; height: 24px; padding: 0 9px; border-radius: 12px; background: var(--look-tint, var(--md-sys-color-primary-container)); color: var(--md-sys-color-primary); font-size: 11px; font-weight: 600; display: flex; align-items: center; white-space: nowrap; }
+.xt-bar { height: 6px; border-radius: 3px; background: rgb(var(--ink) / 0.08); margin: 12px 0 8px; overflow: hidden; }
+.xt-bar > div { height: 100%; border-radius: 3px; background: var(--md-sys-color-primary); transition: width 0.3s ease; }
+.xt-line { display: flex; justify-content: space-between; gap: 8px; font-size: 12px; color: var(--dim); }
+.xt-foot { display: flex; align-items: center; gap: 8px; padding-top: 10px; margin-top: 10px; border-top: 1px solid var(--look-line, var(--divider)); }
+.xt-foot svg { width: 15px; height: 15px; fill: none; stroke: var(--dim); stroke-width: 2; flex: none; }
+.xt-save { flex: 1; min-width: 0; font-size: 12px; color: var(--dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.xt-btn { flex: none; height: 32px; padding: 0 12px; border: none; border-radius: 16px; background: var(--look-tint, var(--md-sys-color-primary-container)); color: var(--md-sys-color-primary); font: inherit; font-size: 12px; font-weight: 600; }
+.xt-btn.ghost { background: transparent; border: 1px solid var(--look-line, var(--divider)); color: var(--md-sys-color-on-surface); }
+.xt-list { background: var(--md-sys-color-surface); border: 1px solid var(--look-line, var(--divider)); border-radius: 16px; overflow: hidden; }
+.xt-row { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-bottom: 1px solid var(--look-line, var(--divider)); }
+.xt-row:last-child { border-bottom: none; }
+.xt-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--md-sys-color-primary); flex: none; }
+.xt-dot.bad { background: var(--warning); }
+.xt-dot.off { background: var(--dim); }
+.xt-empty { font-size: 13px; color: var(--dim); padding: 6px 2px 4px; line-height: 1.45; }
+/* The page's own per-file rows give way to the task cards once there are tasks; the record count is History's. */
+#transfers-modal-active[hidden] { display: none !important; }
+#transfers-modal #transfers-sub { display: none; }
+
+/* ---------------------------------------------------------------- 6. bottom bar: Home, Phone, Cloud SSD, Gaming, More */
+.nav-tab[hidden] { display: none !important; }
+.material-bottom-nav .nav-icon-indicator { width: 52px; }
+.material-bottom-nav .nav-label { white-space: nowrap; }
+
+/* ---------------------------------------------------------------- 7. nothing wider than the screen */
+.tab-screen { overflow-x: clip; }
+/* Phone tab: Internal storage, Starred, Send a folder as three even tiles. As one row of buttons they were wider than
+   the screen, which made the whole page wider and pushed the bottom bar out of sight. */
+.phone-quick-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.phone-quick-btn { flex-direction: column; align-items: flex-start; justify-content: flex-start; gap: 6px; padding: 10px 12px; min-width: 0; }
+.phone-quick-btn > span { white-space: normal; overflow-wrap: anywhere; line-height: 1.25; max-width: 100%; }
+.phone-quick-btn > .phone-quick-meta { margin-left: 0; margin-top: -4px; font-size: 11px; white-space: nowrap; }
+/* The pairing screen lies over any page it is opened from. */
+.pair-overlay { z-index: 1295; }
+
+/* ---------------------------------------------------------------- 8. Home: send tiles, task cards, the cards below */
+.send-tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.send-tile {
+  display: flex; flex-direction: column; align-items: center; gap: 8px; min-width: 0; padding: 14px 6px 12px; border-radius: 18px;
+  border: 1px solid var(--look-line, var(--divider)); background: var(--md-sys-color-surface); color: var(--md-sys-color-on-surface);
+  font: inherit; font-size: 13px; font-weight: 600; cursor: pointer;
+}
+:root[data-look="ac"] .send-tile { border-color: transparent; box-shadow: 0 6px 20px rgba(15, 23, 42, 0.06); }
+.send-tile:active { transform: scale(0.97); }
+.send-tile-icon { width: 40px; height: 40px; border-radius: 50%; background: var(--look-tint, var(--md-sys-color-primary-container)); display: flex; align-items: center; justify-content: center; }
+.send-tile-icon svg { width: 20px; height: 20px; fill: var(--md-sys-color-primary); }
+.send-tile-name { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* The single-file rows give way to the task cards once there are tasks. */
+#transfers-active[hidden] { display: none !important; }
+#home-xfer-now:empty, #home-xfer-done:empty { display: none; }
+.xt-empty-card { background: var(--md-sys-color-surface); border: 1px dashed var(--look-line, var(--divider)); border-radius: 16px; padding: 14px; }
+/* The PC, Space Saver and Camera backup cards: name and state on top, the buttons in one row below. Side by side the
+   text was squeezed into a narrow column and broke after every word. */
+#tab-more .pc-connection-banner-card { flex-direction: column; align-items: stretch; gap: 12px; padding: 14px; margin-top: 0; }
+#tab-more .pc-conn-left { align-items: flex-start; gap: 12px; }
+#tab-more .pc-conn-icon-halo { width: 40px; height: 40px; flex: none; }
+#tab-more .pc-conn-title { font-size: 15px; line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#tab-more .pc-conn-pills-row { gap: 6px; margin-top: 8px; }
+#tab-more .pc-conn-pill { font-size: 11px; padding: 3px 8px; white-space: nowrap; }
+#tab-more .pc-conn-actions,
+#tab-more #backup-card .pc-conn-actions { display: flex; flex-direction: row; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 8px; margin-left: 0; }
+#tab-more .pc-conn-toggle-btn { height: 36px; padding: 0 16px; font-size: 13px; }
+#tab-more #backup-card .pc-conn-toggle-btn.icon { width: 36px; height: 36px; padding: 0; border-radius: 50%; }
+#tab-more #backup-card { margin-top: 10px !important; }
+
+/* ---------------------------------------------------------------- 9. More: sections, like a phone's Settings */
+.more-me { display: flex; align-items: center; gap: 12px; padding: 14px; border-radius: 20px; background: var(--md-sys-color-surface); border: 1px solid var(--look-line, var(--divider)); }
+:root[data-look="ac"] .more-me, :root[data-look="ac"] .more-row { border-color: transparent; box-shadow: 0 6px 20px rgba(15, 23, 42, 0.06); }
+.more-me-avatar { width: 48px; height: 48px; border-radius: 50%; flex: none; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 700; background: var(--md-sys-color-primary); color: var(--on-primary, #fff); }
+.more-me-who { flex: 1; min-width: 0; }
+.more-me-name { font-size: 16px; font-weight: 600; color: var(--md-sys-color-on-surface); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.more-me-sub { font-size: 12px; color: var(--dim); margin-top: 2px; }
+.more-me .drive-btn { flex: none; width: auto; padding: 7px 16px; font-size: 13px; }
+.more-list { display: flex; flex-direction: column; gap: 8px; }
+.as-page .more-list { padding: 4px 16px 24px; }
+.more-row {
+  display: flex; align-items: center; gap: 12px; width: 100%; min-height: 64px; padding: 12px 14px; border-radius: 18px; text-align: left;
+  border: 1px solid var(--look-line, var(--divider)); background: var(--md-sys-color-surface); color: var(--md-sys-color-on-surface);
+  font: inherit; cursor: pointer;
+}
+.more-row:active { background: var(--look-tint, rgb(var(--ink) / 0.06)); }
+.more-row-icon { width: 40px; height: 40px; border-radius: 50%; flex: none; display: flex; align-items: center; justify-content: center; background: var(--look-tint, var(--md-sys-color-primary-container)); }
+.more-row-icon svg { width: 20px; height: 20px; fill: var(--md-sys-color-primary); }
+.more-row-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.more-row-title { font-size: 15px; font-weight: 600; }
+.more-row-sub { font-size: 12px; color: var(--dim); line-height: 1.35; overflow-wrap: anywhere; }
+.more-row-go { flex: none; display: flex; }
+.more-row-go svg { width: 20px; height: 20px; fill: var(--dim); }
+
+/* ---------------------------------------------------------------- 10. Permissions: every permission, in three parts */
+.as-page .perm-list { max-height: none; gap: 0; padding-bottom: 24px; }
+.perm-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 20px; }
+.perm-group-title { font-size: 12px; font-weight: 600; letter-spacing: 0.3px; text-transform: uppercase; color: var(--md-sys-color-primary); margin: 0 2px 4px; }
+.perm-group-note { font-size: 12px; color: var(--dim); line-height: 1.45; margin: 2px 2px 0; }
+.perm-empty { font-size: 13px; color: var(--dim); line-height: 1.45; padding: 12px; border-radius: 12px; border: 1px dashed var(--look-line, var(--divider)); }
+.perm-row .settings-pill { flex: none; }
+.perm-row-link { cursor: pointer; }
+.perm-row-link svg { width: 20px; height: 20px; fill: var(--dim); flex: none; }
+
+/* ---------------------------------------------------------------- 11. Cloud SSD tab: kinds of file in the open folder */
+.ssd-kinds-strip { display: flex; gap: 8px; overflow-x: auto; padding: 2px 0 8px; scrollbar-width: none; }
+.ssd-kinds-strip::-webkit-scrollbar { display: none; }
+.ssd-kind-chip { flex: none; white-space: nowrap; }
+
+/* ---------------------------------------------------------------- 12. small things seen on the phone */
+/* Settings is shown in parts (app.js SETTINGS_GROUP): the parts that belong elsewhere are not there. */
+.settings-section[hidden], .settings-none[hidden] { display: none !important; }
+.settings-none { margin: 8px 16px; }
+/* More has no files to send: the round send button stays away. */
+body[data-tab="more"] .material-fab { display: none; }
+/* Buttons in a permission row: the size of the "On" pill beside them, not a big oval. */
+.perm-row .m3-tonal-btn { height: 34px; padding: 0 14px; border-radius: 17px; font-size: 12.5px; white-space: nowrap; }
+/* More: the PC, Space Saver and Camera backup cards sit one under the other with the same gap. */
+.more-cards-title { margin-top: 4px; }
+#tab-more .section-container:has(> .pc-connection-banner-card) { margin-bottom: 10px; }

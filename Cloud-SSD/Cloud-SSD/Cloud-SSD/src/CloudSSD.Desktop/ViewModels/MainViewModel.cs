@@ -31,6 +31,7 @@ public sealed partial class MainViewModel : ObservableObject
             new CloudDrivesViewModel(host),
             care,
             new GameLibraryViewModel(host),
+            new AppsViewModel(host),
             settings,
         };
         _all = new List<PageViewModel>();

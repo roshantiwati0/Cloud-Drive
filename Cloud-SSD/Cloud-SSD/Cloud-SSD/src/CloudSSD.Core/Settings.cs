@@ -28,6 +28,21 @@ public sealed class AppSettings
     public MemorySettings Memory { get; set; } = new();
     public MirrorSettings Mirror { get; set; } = new();
     public HybridDriveSettings Hybrid { get; set; } = new();
+    public GeminiSettings Gemini { get; set; } = new();
+}
+
+/// <summary>
+/// Settings for the Gemini AI Assistant (file summarization, interactive Q&amp;A, and semantic auto-tagging).
+/// </summary>
+public sealed class GeminiSettings
+{
+    public bool Enabled { get; set; } = true;
+    /// <summary>Google Gemini API Key. If empty, falls back to GEMINI_API_KEY environment variable.</summary>
+    public string? ApiKey { get; set; }
+    /// <summary>Default model: gemini-4-hydrogen (balanced frontier intelligence) or gemini-3.5-flash-lite.</summary>
+    public string Model { get; set; } = "gemini-4-hydrogen";
+    public double Temperature { get; set; } = 0.2;
+    public int MaxOutputTokens { get; set; } = 2048;
 }
 
 /// <summary>

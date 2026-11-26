@@ -1,0 +1,461 @@
+/* =============================================================================================================
+   App looks — Settings → App look. app.js sets data-look on <html> (and data-theme: light for ac/saaf, dark for
+   raat, so app.css's own light and dark rules keep working underneath):
+
+   ac   — "A+C" (the default): A's calm page (pale grey, white cards) with C's shapes — a curved blue band at the
+          top, round icon circles, soft floating cards — and ONE colour: blue. No pink, yellow or green anywhere; a
+          warning or an error keeps its own colour because it has to stand out.
+   saaf — "A": the same calm light page, white cards with a thin border, colourful file and category icons.
+   raat — "B": dark navy with a teal accent, darker cards, a floating rounded bottom bar.
+
+   Loaded after app.css, so the same selectors win here. Colours are tokens; the few fixed colours of app.css that
+   carry their own hue (status dots, Connect buttons, file-kind icons, progress bars) are set again per look.
+   ============================================================================================================= */
+
+/* ---------------------------------------------------------------- 1. tokens: the two light looks */
+:root[data-look="ac"],
+:root[data-look="saaf"] {
+  color-scheme: light;
+  --md-sys-color-background: #F4F6FA;
+  --md-sys-color-surface: #FFFFFF;
+  --md-sys-color-surface-variant: #EEF2F8;
+  --md-sys-color-surface-container: #FFFFFF;
+  --md-sys-color-on-background: #0F172A;
+  --md-sys-color-on-surface: #0F172A;
+  --md-sys-color-on-surface-variant: #556070;
+  --md-sys-color-primary: #2563EB;
+  --md-sys-color-primary-container: #E8F0FE;
+  --md-sys-color-on-primary-container: #1D4ED8;
+  --md-sys-color-secondary-container: #E8F0FE;
+  --md-sys-color-on-secondary-container: #1D4ED8;
+  --md-sys-color-outline: #94A3B8;
+  --md-sys-color-outline-variant: #E2E7EF;
+  --dim: #556070;
+  --divider: rgba(15, 23, 42, 0.08);
+  --ink: 15 23 42;
+  --surface-rgb: 255 255 255;
+  --on-primary: #FFFFFF;
+  --hero-1: #E8F0FE;
+  --hero-2: #F4F6FA;
+  --card-1: #FFFFFF;
+  --card-2: #FFFFFF;
+  --code-bg: #F1F4F9;
+  --shadow: rgba(15, 23, 42, 0.14);
+  --look-tint: #E8F0FE;          /* pale blue: tinted buttons, icon circles, the chosen tab */
+  --look-line: #E2E7EF;          /* card borders */
+  --look-radius: 20px;
+}
+
+/* A+C: one colour — every category and every "good" state is blue. */
+:root[data-look="ac"] {
+  --cat-downloads-bg: #E8F0FE; --cat-downloads-fg: #1D4ED8;
+  --cat-images-bg: #E8F0FE; --cat-images-fg: #1D4ED8;
+  --cat-videos-bg: #E8F0FE; --cat-videos-fg: #1D4ED8;
+  --cat-audio-bg: #E8F0FE; --cat-audio-fg: #1D4ED8;
+  --cat-docs-bg: #E8F0FE; --cat-docs-fg: #1D4ED8;
+  --cat-apps-bg: #E8F0FE; --cat-apps-fg: #1D4ED8;
+  --cat-safe-bg: #E8F0FE; --cat-safe-fg: #1D4ED8;
+  --cat-starred-bg: #E8F0FE; --cat-starred-fg: #1D4ED8;
+  --success: #2563EB;
+  --info: #2563EB;
+  --warning: #B45309;
+  --error: #B91C1C;
+}
+
+/* Saaf: colourful categories, as A had them (soft pastel tiles, dark icons). */
+:root[data-look="saaf"] {
+  --cat-downloads-bg: #E8F0FE; --cat-downloads-fg: #1D4ED8;
+  --cat-images-bg: #FCE7F3; --cat-images-fg: #9D174D;
+  --cat-videos-bg: #FEE2E2; --cat-videos-fg: #B91C1C;
+  --cat-audio-bg: #FEF3C7; --cat-audio-fg: #92400E;
+  --cat-docs-bg: #E0F2FE; --cat-docs-fg: #075985;
+  --cat-apps-bg: #DCFCE7; --cat-apps-fg: #166534;
+  --cat-safe-bg: #EDE9FE; --cat-safe-fg: #5B21B6;
+  --cat-starred-bg: #FEF3C7; --cat-starred-fg: #92400E;
+  --success: #047857;
+  --info: #0369A1;
+  --warning: #B45309;
+  --error: #B91C1C;
+}
+
+/* ---------------------------------------------------------------- 2. tokens: Raat (dark navy, teal) */
+:root[data-look="raat"] {
+  color-scheme: dark;
+  --md-sys-color-background: #0B0F17;
+  --md-sys-color-surface: #121826;
+  --md-sys-color-surface-variant: #1A2232;
+  --md-sys-color-surface-container: #121826;
+  --md-sys-color-on-background: #E6EAF2;
+  --md-sys-color-on-surface: #E6EAF2;
+  --md-sys-color-on-surface-variant: #9AA4B2;
+  --md-sys-color-primary: #5EEAD4;
+  --md-sys-color-primary-container: #133B37;
+  --md-sys-color-on-primary-container: #99F6E4;
+  --md-sys-color-secondary-container: #133B37;
+  --md-sys-color-on-secondary-container: #99F6E4;
+  --md-sys-color-outline: #3B4A60;
+  --md-sys-color-outline-variant: #222B3A;
+  --dim: #9AA4B2;
+  --divider: rgba(255, 255, 255, 0.07);
+  --ink: 255 255 255;
+  --surface-rgb: 18 24 38;
+  --on-primary: #04201C;
+  --success: #5EEAD4;
+  --info: #7DD3FC;
+  --warning: #FBBF24;
+  --error: #F87171;
+  --hero-1: #121826;
+  --hero-2: #0B0F17;
+  --card-1: #121826;
+  --card-2: #121826;
+  --code-bg: #0E141F;
+  --shadow: rgba(0, 0, 0, 0.55);
+  --look-tint: #133B37;
+  --look-line: #222B3A;
+  --look-radius: 22px;
+  --cat-downloads-bg: #12304A; --cat-downloads-fg: #7DD3FC;
+  --cat-images-bg: #2A2340; --cat-images-fg: #C4B5FD;
+  --cat-videos-bg: #3A1F24; --cat-videos-fg: #FCA5A5;
+  --cat-audio-bg: #3A3015; --cat-audio-fg: #FCD34D;
+  --cat-docs-bg: #16312D; --cat-docs-fg: #5EEAD4;
+  --cat-apps-bg: #16312D; --cat-apps-fg: #86EFAC;
+  --cat-safe-bg: #2A2340; --cat-safe-fg: #C4B5FD;
+  --cat-starred-bg: #3A3015; --cat-starred-fg: #FCD34D;
+}
+
+/* ---------------------------------------------------------------- 3. every card-like surface */
+:root[data-look] :is(.hw-widget-card, .cat-grid-card, .storage-device-card, .recent-card, .recent-empty-card,
+  .recent-file-card, .clean-card, .share-btn-card, .gaming-hero-card, .phone-permission-card, .mini-media-card,
+  .usage-rows, .xfer-card, .transfer-card-item, .device-row, .explorer-item, .phone-file-item, .phone-item-row,
+  .file-row-item, .conn-row, .gm-card, .mini-hud-banner, .app-handoff-banner, .select-bar, .modal-card) {
+  background: var(--md-sys-color-surface);
+  border: 1px solid var(--look-line);
+}
+:root[data-look] :is(.hw-widget-card, .cat-grid-card, .storage-device-card, .clean-card, .share-btn-card,
+  .gaming-hero-card, .phone-permission-card, .mini-media-card, .usage-rows, .device-row, .modal-card) {
+  border-radius: var(--look-radius);
+}
+:root[data-look] :is(.explorer-item, .phone-file-item, .phone-item-row, .file-row-item, .xfer-card, .transfer-card-item) {
+  border-radius: 16px;
+}
+/* A+C: cards float softly instead of a hard border (C's floating card). */
+:root[data-look="ac"] :is(.hw-widget-card, .cat-grid-card, .storage-device-card, .clean-card, .share-btn-card,
+  .gaming-hero-card, .phone-permission-card, .mini-media-card, .usage-rows, .device-row, .modal-card, .recent-card) {
+  border-color: transparent;
+  box-shadow: 0 6px 20px rgba(15, 23, 42, 0.06);
+}
+:root[data-look] .m3-bottom-sheet { background: var(--md-sys-color-surface); border-radius: 28px 28px 0 0; }
+:root[data-look] .modal-card { border-radius: 26px; }
+
+/* Icon holders: round circles in the look's pale colour. */
+:root[data-look] :is(.hw-icon-box, .conn-modal-icon-wrap, .perm-card-icon, .recent-card-icon, .clean-card-icon,
+  .m3-sheet-file-icon) {
+  border-radius: 50%;
+}
+:root[data-look="ac"] :is(.hw-icon-box, .conn-modal-icon-wrap, .perm-card-icon, .recent-card-icon, .clean-card-icon,
+  .explorer-item .item-icon, .phone-item-icon) {
+  background: var(--look-tint);
+  color: var(--md-sys-color-primary);
+}
+
+/* ---------------------------------------------------------------- 4. the top: A+C's curved blue band */
+:root[data-look="ac"] .search-header {
+  background: var(--md-sys-color-primary);
+  border-radius: 0 0 28px 28px;
+  padding: 12px 16px 18px 16px;
+  box-shadow: 0 10px 24px rgba(37, 99, 235, 0.18);
+  margin-bottom: 6px;
+}
+:root[data-look="ac"] .search-bar-pill { background: #FFFFFF; border-color: transparent; box-shadow: none; }
+:root[data-look="ac"] .search-bar-pill:focus-within { box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.45); }
+:root[data-look="ac"] .profile-avatar { background: #FFFFFF; color: #2563EB; box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.55); }
+:root[data-look="saaf"] .search-bar-pill { background: #FFFFFF; border: 1px solid var(--look-line); box-shadow: none; }
+:root[data-look="saaf"] .profile-avatar { background: var(--md-sys-color-primary); color: #FFFFFF; }
+:root[data-look="raat"] .search-bar-pill { background: #121826; border: 1px solid #222B3A; box-shadow: none; }
+:root[data-look="raat"] .profile-avatar { background: var(--md-sys-color-primary); color: #04201C; }
+
+/* ---------------------------------------------------------------- 5. bottom bar */
+:root[data-look] .material-bottom-nav { background: var(--md-sys-color-surface); border-top: 1px solid var(--look-line); }
+:root[data-look] .nav-tab.active .nav-icon-indicator { background: var(--look-tint); color: var(--md-sys-color-on-primary-container); }
+:root[data-look] .nav-tab.active .nav-icon-indicator svg { fill: var(--md-sys-color-on-primary-container); }
+:root[data-look="ac"] .nav-tab.active .nav-label,
+:root[data-look="saaf"] .nav-tab.active .nav-label { color: var(--md-sys-color-primary); }
+/* Raat: a floating rounded bar (B). */
+:root[data-look="raat"] .material-bottom-nav {
+  left: 12px; right: 12px; bottom: 12px;
+  height: 66px;
+  border: 1px solid #222B3A;
+  border-radius: 22px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+}
+:root[data-look="raat"] .nav-tab.active .nav-label { color: var(--md-sys-color-primary); }
+
+/* ---------------------------------------------------------------- 6. buttons, chips, inputs */
+:root[data-look] :is(.m3-filled-btn, .modal-btn-primary, .conn-master-btn.connect, .pc-conn-toggle-btn.connect,
+  .perm-grant-btn, .saver-btn, .drive-btn.mount, .btn-file-action.send, .app-handoff-btn) {
+  background: var(--md-sys-color-primary);
+  color: var(--on-primary);
+  border-color: transparent;
+}
+:root[data-look] :is(.m3-tonal-btn, .quick-chip-btn, .clean-action-btn, .remote-btn, .mini-media-btn, .tc-action-btn,
+  .gaming-refresh-btn, .modal-btn-sm, .conn-ping-btn) {
+  background: var(--look-tint);
+  color: var(--md-sys-color-on-primary-container);
+  border-color: transparent;
+}
+:root[data-look] :is(.m3-filled-btn, .m3-tonal-btn, .modal-btn-primary, .conn-master-btn, .quick-chip-btn) { border-radius: 24px; }
+:root[data-look] .transfer-chip {
+  background: var(--md-sys-color-surface);
+  border: 1px solid var(--look-line);
+  color: var(--md-sys-color-on-surface-variant);
+}
+:root[data-look] .transfer-chip.active {
+  background: var(--md-sys-color-primary);
+  border-color: var(--md-sys-color-primary);
+  color: var(--on-primary);
+}
+:root[data-look="raat"] .transfer-chip.active { background: #133B37; border-color: #133B37; color: #5EEAD4; }
+:root[data-look] .ssd-drive-pill.active,
+:root[data-look] .ssd-drive-pill[aria-pressed="true"] { background: var(--md-sys-color-primary); color: var(--on-primary); }
+:root[data-look] .modal-input {
+  background: var(--md-sys-color-surface);
+  border: 1px solid var(--look-line);
+  border-radius: 14px;
+  color: var(--md-sys-color-on-surface);
+}
+:root[data-look] .modal-input:focus { border-color: var(--md-sys-color-primary); }
+:root[data-look] .material-fab { background: var(--md-sys-color-primary); color: var(--on-primary); border-radius: 20px; }
+:root[data-look] .material-fab svg { fill: var(--on-primary); }
+
+/* ---------------------------------------------------------------- 7. A+C: the coloured bits become the one colour */
+:root[data-look="ac"] :is(.profile-status-dot, .share-device-pill .status-dot, .pc-conn-pulse-dot, .conn-modal-pulse-dot,
+  .live-indicator-dot) {
+  background: #2563EB;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+}
+:root[data-look="ac"] :is(.profile-status-dot.offline, .pc-conn-pulse-dot.offline, .conn-modal-pulse-dot.offline) {
+  background: #94A3B8;
+  box-shadow: none;
+}
+:root[data-look="ac"] :is(.dl-progress-bar-fill, .transfer-progress-fill, .storage-bar-fill,
+  .xfer-card.done .transfer-progress-fill) {
+  background: #2563EB;
+}
+:root[data-look="ac"] .xfer-card.failed .transfer-progress-fill { background: var(--error); }
+:root[data-look="ac"] :is(.share-icon-circle, .drive-letter-pill, .drive-letter-pill.cloud, .drive-letter-pill.local) {
+  background: #2563EB;
+  color: #FFFFFF;
+}
+:root[data-look="ac"] :is(.item-icon.kind-images, .item-icon.kind-videos, .item-icon.kind-audio, .item-icon.kind-pdf,
+  .item-icon.kind-apk, .item-icon.kind-archive, .phone-item-icon svg, .phone-item-icon.folder svg, .mini-media-icon,
+  .tc-icon-wrap.stream, .tc-icon-wrap.offload, .tc-icon-wrap.received, .tc-dir-badge.stream, .tc-dir-badge.offload,
+  .tc-dir-badge.received, .tc-dir-badge.sent, .transfer-type-tag.upload, .transfer-type-tag.download, .tc-speed-pill,
+  .m3-file-btn.starred) {
+  color: #1D4ED8;
+  fill: #1D4ED8;
+}
+:root[data-look="ac"] :is(.seg-images, .legend-dot.img) { background: #1E3A8A; }
+:root[data-look="ac"] :is(.seg-videos, .legend-dot.vid) { background: #1D4ED8; }
+:root[data-look="ac"] :is(.seg-audio, .legend-dot.aud) { background: #3B82F6; }
+:root[data-look="ac"] :is(.seg-docs, .legend-dot.doc) { background: #60A5FA; }
+:root[data-look="ac"] :is(.seg-other, .legend-dot.oth) { background: #BFDBFE; }
+:root[data-look="ac"] .ram-seg.system { background: #1E3A8A; }
+:root[data-look="ac"] .ram-seg.apps { background: #2563EB; }
+:root[data-look="ac"] .ram-seg.cached { background: #93C5FD; }
+:root[data-look="ac"] .mini-hud-banner { border-color: #2563EB; }
+:root[data-look="ac"] :is(.banner-sub, .banner-chip) { color: #1D4ED8; }
+:root[data-look="ac"] .banner-title { color: #0F172A; }
+
+/* Raat: the bits with their own colour take teal where they meant "on" or "go". */
+:root[data-look="raat"] :is(.profile-status-dot, .pc-conn-pulse-dot, .conn-modal-pulse-dot, .live-indicator-dot) {
+  background: #5EEAD4;
+  box-shadow: 0 0 8px rgba(94, 234, 212, 0.6);
+}
+:root[data-look="raat"] :is(.dl-progress-bar-fill, .transfer-progress-fill, .storage-bar-fill) { background: #5EEAD4; }
+
+/* ---------------------------------------------------------------- 8. Settings → App look: one card per look */
+.look-picker {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+.look-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  padding: 12px;
+  border-radius: 18px;
+  border: 1.5px solid var(--md-sys-color-outline-variant);
+  background: var(--md-sys-color-surface);
+  color: var(--md-sys-color-on-surface);
+  text-align: left;
+  min-height: 118px;
+  cursor: pointer;
+}
+.look-card.active { border-color: var(--md-sys-color-primary); box-shadow: 0 0 0 2px var(--md-sys-color-primary) inset; }
+.look-name { font-size: 14px; font-weight: 700; }
+.look-sub { font-size: 12px; color: var(--dim); line-height: 1.3; }
+/* A PC's "Home" on the phone, as File Explorer starts: Quick access (three in a row), then This PC's drives. */
+.ssd-items-container.pc-home { display: block; padding: 0; }
+.pc-home-sec { padding: 4px 0 8px; }
+.pc-qa-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.pc-qa-card { padding: 12px 10px; align-items: flex-start; }
+.pc-qa-card .cat-grid-icon-box { width: 38px; height: 38px; border-radius: 12px; margin-bottom: 8px; }
+.pc-qa-card .cat-grid-icon-box svg { width: 22px; height: 22px; }
+.pc-qa-card .cat-grid-name { font-size: 13.5px; max-width: 100%; }
+.pc-qa-icon { background: var(--look-tint, var(--md-sys-color-primary-container)); color: var(--md-sys-color-primary); }
+.pc-home-note { font-size: 12.5px; color: var(--dim); margin: 10px 2px 0; line-height: 1.4; }
+.pc-drive-list { display: flex; flex-direction: column; gap: 10px; }
+.pc-drive-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px;
+  border-radius: 18px;
+  border: 1px solid var(--divider);
+  background: var(--md-sys-color-surface);
+  cursor: pointer;
+}
+.pc-drive-row:active { background: var(--md-sys-color-surface-variant); }
+.pc-drive-row.off { opacity: 0.6; }
+.pc-drive-icon {
+  width: 44px;
+  height: 44px;
+  flex: none;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--look-tint, var(--md-sys-color-primary-container));
+  color: var(--md-sys-color-primary);
+}
+.pc-drive-icon svg { width: 24px; height: 24px; fill: currentColor; }
+.pc-drive-text { flex: 1; min-width: 0; }
+.pc-drive-name { font-size: 14.5px; font-weight: 700; color: var(--md-sys-color-on-surface); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pc-drive-text .usage-bar { margin-top: 8px; height: 6px; border-radius: 3px; }
+.pc-drive-text .usage-bar > div { height: 100%; background: var(--md-sys-color-primary); border-radius: 3px; }
+.pc-drive-sub { font-size: 12px; color: var(--dim); margin-top: 6px; }
+
+/* Settings → App icon: the icons the app can have on the home screen, four in a row. */
+.icon-picker {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+.icon-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 2px 8px;
+  border-radius: 16px;
+  border: 1.5px solid var(--md-sys-color-outline-variant);
+  background: var(--md-sys-color-surface);
+  color: var(--md-sys-color-on-surface);
+  cursor: pointer;
+}
+.icon-card img { display: block; width: 52px; height: 52px; border-radius: 13px; box-shadow: 0 0 0 1px rgb(var(--ink) / 0.10), 0 1px 4px rgb(var(--ink) / 0.20); }
+.icon-card.active { border-color: var(--md-sys-color-primary); box-shadow: 0 0 0 2px var(--md-sys-color-primary) inset; }
+.icon-name { font-size: 12px; font-weight: 600; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.icon-note { margin-top: 8px; }
+/* A tiny picture of each look: page, band / card, accent. */
+.look-swatch { display: flex; width: 100%; height: 34px; border-radius: 10px; overflow: hidden; border: 1px solid rgb(var(--ink) / 0.08); }
+.look-swatch i { flex: 1; }
+.look-swatch-ac i:nth-child(1) { background: #2563EB; flex: 1.4; }
+.look-swatch-ac i:nth-child(2) { background: #F4F6FA; }
+.look-swatch-ac i:nth-child(3) { background: #E8F0FE; }
+.look-swatch-saaf i:nth-child(1) { background: #FFFFFF; flex: 1.4; }
+.look-swatch-saaf i:nth-child(2) { background: #FDE68A; }
+.look-swatch-saaf i:nth-child(3) { background: #2563EB; }
+.look-swatch-raat i:nth-child(1) { background: #0B0F17; flex: 1.4; }
+.look-swatch-raat i:nth-child(2) { background: #121826; }
+.look-swatch-raat i:nth-child(3) { background: #5EEAD4; }
+.look-swatch-auto i:nth-child(1) { background: #2563EB; flex: 1.4; }
+.look-swatch-auto i:nth-child(2) { background: #F4F6FA; }
+.look-swatch-auto i:nth-child(3) { background: #0B0F17; }
+
+/* ---------------------------------------------------------------- 9. old fixed colours → the look's tokens (every look) */
+/* Text app.css wrote for a dark page only (near-white), which vanished on a light one. */
+:root[data-look] :is(.drive-card-name, .phone-item-name, .transfer-filename, .ram-proc-name, .drive-btn.browse, .phone-back-btn) {
+  color: var(--md-sys-color-on-surface);
+}
+:root[data-look] :is(.drive-card-type, .drive-card-space, .phone-path-text, .phone-item-meta, .transfer-subinfo, .ram-proc-pkg,
+  .ram-legend-item) {
+  color: var(--dim);
+}
+:root[data-look] .ram-proc-mb { color: var(--md-sys-color-primary); }
+/* The toast: the page's ink with the page's colour as text, in any look. */
+:root[data-look] .toast {
+  background: var(--md-sys-color-on-surface);
+  color: var(--md-sys-color-background);
+  box-shadow: 0 6px 18px var(--shadow);
+}
+/* Cards that had a dark glass of their own. */
+:root[data-look] :is(.download-progress-card, .active-transfer-card, .pc-connection-banner-card, .saver-card) {
+  background: var(--md-sys-color-surface);
+  border: 1px solid var(--look-line);
+  box-shadow: 0 6px 20px var(--shadow);
+  border-radius: var(--look-radius);
+}
+:root[data-look="ac"] :is(.download-progress-card, .active-transfer-card, .pc-connection-banner-card, .saver-card) {
+  border-color: transparent;
+  box-shadow: 0 6px 20px rgba(15, 23, 42, 0.06);
+}
+/* Icon halos: the look's pale colour with its accent (blue, or teal in Raat). */
+:root[data-look] :is(.explorer-item .item-icon.folder-icon, .pf-icon, .pair-pc-icon, .storage-dev-icon, .m3-sheet-file-icon,
+  .pc-conn-icon-halo, .saver-halo, .dl-progress-icon-box, .transfer-icon-box, .pfi-btn) {
+  background: var(--look-tint);
+  color: var(--md-sys-color-primary);
+  fill: var(--md-sys-color-primary);
+}
+/* Shadows: soft on the light looks, deep on Raat. */
+:root[data-look] :is(.m3-bottom-sheet, .connection-modal-sheet) { box-shadow: 0 -8px 28px var(--shadow); }
+:root[data-look] :is(.material-fab, .transfer-pill, .select-bar, .viewer-modal-card) { box-shadow: 0 8px 22px var(--shadow); }
+:root[data-look] .transfer-pill { border-color: var(--look-line); }
+:root[data-look] .transfer-pill-fill { background: var(--look-tint); }
+:root[data-look] :is(.explorer-item.selected, .phone-item-row.selected, .pair-pc.selected) {
+  background: var(--look-tint);
+  border-color: var(--md-sys-color-primary);
+}
+:root[data-look] :is(.row-check, .thumb-tile-check) { background: var(--md-sys-color-primary); color: var(--on-primary); }
+
+/* ---------------------------------------------------------------- 10. A+C: every remaining tint becomes the one colour */
+/* Green "on", yellow "speed", purple "RAM", gradients — all pale blue with blue text. Warnings and errors keep theirs. */
+:root[data-look="ac"] :is(.hw-icon-box.ram-icon, .hw-icon-box.storage-icon, .hw-icon-box.ssd-icon, .hw-icon-box.pc-icon,
+  .hw-badge.online, .pc-conn-pill.speed, .pc-conn-pill.ping, .conn-status-tag.connected, .gaming-badge, .settings-pill.on,
+  .drive-conn-badge.mounted, .tc-dir-badge.received, .tc-dir-badge.sent, .tc-dir-badge.stream, .tc-dir-badge.offload,
+  .transfer-type-tag.upload, .transfer-type-tag.download, .mini-media-icon, .audio-viewer-art, .ram-tint, .storage-tint,
+  .cloud-tint, .pc-tint, .banner-chip, .quick-chip-btn.primary, .download-progress-card.complete .dl-progress-icon-box) {
+  background: #E8F0FE;
+  color: #1D4ED8;
+  fill: #1D4ED8;
+  border-color: rgba(37, 99, 235, 0.35);
+  box-shadow: none;
+}
+:root[data-look="ac"] :is(.hw-icon-box, .pc-conn-icon-halo) svg { fill: #1D4ED8; }
+:root[data-look="ac"] .ssd-drive-note { background: #E8F0FE; border-color: rgba(37, 99, 235, 0.3); color: #1E3A8A; }
+:root[data-look="ac"] :is(.download-progress-card.complete, .drive-manager-card.mounted, .xfer-card.download, .xfer-card.done) {
+  border-color: rgba(37, 99, 235, 0.45);
+}
+:root[data-look="ac"] .mini-hud-banner { box-shadow: 0 4px 14px rgba(37, 99, 235, 0.15); }
+:root[data-look="ac"] .device-dot.live { background: #2563EB; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.18); }
+:root[data-look="ac"] :is(.pair-logo, .profile-menu-avatar) { background: #2563EB; color: #FFFFFF; }
+:root[data-look="ac"] .share-icon-circle { box-shadow: 0 4px 16px rgba(37, 99, 235, 0.3); }
+:root[data-look="raat"] :is(.pair-logo, .profile-menu-avatar) { background: #5EEAD4; color: #04201C; }
+:root[data-look="raat"] .device-dot.live { background: #5EEAD4; box-shadow: 0 0 0 3px rgba(94, 234, 212, 0.18); }
+
+/* ---------------------------------------------------------------- 11. Phone tab quick row, Home groups, transfer groups */
+:root[data-look] .phone-quick-btn {
+  background: var(--md-sys-color-surface);
+  border: 1px solid var(--look-line);
+  border-radius: 18px;
+}
+:root[data-look="ac"] .phone-quick-btn { border-color: transparent; box-shadow: 0 6px 20px rgba(15, 23, 42, 0.06); }
+:root[data-look] :is(.hw-group-title, .history-group-title) { color: var(--md-sys-color-primary); }
+/* The Home tiles' bars: storage used the warning colour as its own colour (not a warning), so in A+C all are blue. */
+:root[data-look="ac"] .hw-widget-bar-fill { background: #2563EB; }
+/* Transfer speed: app.css's bright yellow is unreadable on white; each look's accent instead. */
+:root[data-look] .tc-speed-pill { color: var(--md-sys-color-primary); }
+/* Raat's bottom bar floats 12px up: the page ends that much higher so nothing hides behind it. */
+:root[data-look="raat"] body { padding-bottom: 100px; }

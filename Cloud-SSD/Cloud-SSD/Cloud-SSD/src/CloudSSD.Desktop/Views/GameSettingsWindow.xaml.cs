@@ -22,9 +22,11 @@ public partial class GameSettingsWindow : Window
         ArgsBox.Text = game.Arguments;
         WorkBox.Text = game.WorkingDirectory ?? "";
         var candidates = new List<string>();
-        if (host.Mounts.Get(game.MountId) is { } m)
+        // A program added from the Apps page has no cloud drive behind it: its files are in LocalRoot on this PC.
+        var localOnly = game.MountId.Length == 0 && game.LocalRoot != null && Directory.Exists(game.LocalRoot);
+        if (localOnly || host.Mounts.Get(game.MountId) is not null)
         {
-            var root = Path.Combine(m.Root, game.RootPath.Replace('/', '\\'));
+            var root = localOnly ? game.LocalRoot! : Path.Combine(host.Mounts.Get(game.MountId)!.Root, game.RootPath.Replace('/', '\\'));
             try
             {
                 candidates.AddRange(Directory.EnumerateFiles(root, "*.exe", new EnumerationOptions { RecurseSubdirectories = true, MaxRecursionDepth = 5, IgnoreInaccessible = true })

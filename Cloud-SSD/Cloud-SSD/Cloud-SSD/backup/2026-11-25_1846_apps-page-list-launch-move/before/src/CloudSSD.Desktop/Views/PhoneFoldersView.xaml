@@ -1,0 +1,38 @@
+<UserControl x:Class="CloudSSD.Desktop.Views.PhoneFoldersView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!-- Where files from phones are saved on this PC, and moving them on to the cloud drive (PhoneFoldersViewModel;
+         the values and commands are the phone section's). -->
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="0,0,0,20" DataContext="{Binding Hub}">
+            <Border Style="{StaticResource Card}" Margin="0,0,0,14">
+                <StackPanel>
+                    <TextBlock Text="FOLDER CONFIGURATION FOR PHONE SYNC" Style="{StaticResource H2}" Margin="0,0,0,12" />
+
+                    <TextBlock Text="PHONE UPLOAD DESTINATION DIRECTORY" Style="{StaticResource Label}" />
+                    <DockPanel Margin="0,0,0,12">
+                        <Button DockPanel.Dock="Right" Content="Browse…" Command="{Binding BrowseUploadsCommand}" Margin="8,0,0,0" />
+                        <TextBox Text="{Binding UploadDirectory, UpdateSourceTrigger=PropertyChanged}" />
+                    </DockPanel>
+
+                    <TextBlock Text="PHONE PHOTOS AUTO-BACKUP DIRECTORY" Style="{StaticResource Label}" />
+                    <DockPanel>
+                        <Button DockPanel.Dock="Right" Content="Browse…" Command="{Binding BrowsePhotosCommand}" Margin="8,0,0,0" />
+                        <TextBox Text="{Binding PhotosBackupDirectory, UpdateSourceTrigger=PropertyChanged}" />
+                    </DockPanel>
+                </StackPanel>
+            </Border>
+            <Border Style="{StaticResource Card}">
+                <StackPanel>
+                    <TextBlock Text="STORAGE SAVER" Style="{StaticResource Label}" Margin="0,0,0,6" />
+                    <TextBlock Text="{Binding StorageSaverSummary}" Style="{StaticResource Body}" TextWrapping="Wrap" Margin="0,0,0,12" />
+                    <StackPanel Orientation="Horizontal">
+                        <Button Content="⚡ Free Up Space Now" Command="{Binding OffloadToCloudNowCommand}" Style="{StaticResource Primary}" Padding="12,6" Margin="0,0,8,0"
+                                ToolTip="Move files received from the phone to the cloud drive right now" />
+                        <Button Content="Open Uploads Folder" Command="{Binding OpenUploadsFolderCommand}" Padding="12,6" />
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.cloudssd.mobile"
+    android:versionCode="7"
+    android:versionName="0.12.0">
+
+    <uses-sdk android:minSdkVersion="24" android:targetSdkVersion="35" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="29" />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
+    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
+    <!-- "All files access": lets the file browser show documents, APKs and every folder, like the phone's own Files app. -->
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- "Ring" from the PC, to find the phone. -->
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <!-- Camera backup: keeps its schedule after the phone restarts, and keeps the place a photo was taken. -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.ACCESS_MEDIA_LOCATION" />
+    <!-- Lets "Open" on an APK in the file browser hand it to Android's installer (which still asks the user). -->
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+    <!-- Transfers keep going when the app is closed (TransferService). -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+    <!-- "Find my phone" / the PC looking at this phone with the app closed (PeerLinkService). CHANGE_NETWORK_STATE is
+         what Android 14+ asks of a connected-device service. Battery: one system dialog, only when switched on. -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE" />
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+    <!-- App lock: the fingerprint / face check (the screen lock works without it). -->
+    <uses-permission android:name="android.permission.USE_BIOMETRIC" />
+    <!-- Ring: the "Found it" screen over the lock screen (Android 14+ asks the person once). -->
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
+    <!-- Space & RAM: "Uninstall" hands an app to Android's own uninstall prompt; app sizes and recently used apps
+         need "Usage access", which the user turns on in Settings (the app opens that screen). -->
+    <uses-permission android:name="android.permission.REQUEST_DELETE_PACKAGES" />
+    <uses-permission android:name="android.permission.PACKAGE_USAGE_STATS" />
+
+    <!-- Apps this app may see: the launcher apps (Space & RAM's app list) and Tailscale (away from home). -->
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent>
+        <package android:name="com.tailscale.ipn" />
+        <!-- Play on phone: the old Artemis app stays as a backup until our own stream plays as well. -->
+        <package android:name="com.limelight.noir" />
+    </queries>
+
+    <!-- No backups of the app's data: the pairing key and Google sign-ins must not leave the phone. -->
+    <application
+        android:allowBackup="false"
+        android:fullBackupContent="false"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:icon="@mipmap/ic_app_ocean"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_app_ocean"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.CloudSSD"
+        android:requestLegacyExternalStorage="true"
+        android:usesCleartextTraffic="true">
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:launchMode="singleTask"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:windowSoftInputMode="adjustResize">
+            <!-- No launcher entry here: the app's icon on the home screen is one of the "Icon…" aliases below. -->
+            <!-- Pairing link from the PC's QR page (cloudssd://pair?host=…&pair=…), and the way back after Google sign-in. -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="cloudssd" android:host="pair" />
+                <data android:scheme="cloudssd" android:host="auth" />
+            </intent-filter>
+            <!-- GOOGLE-REDIRECT-BEGIN: filled in by build-apk.ps1 from google-oauth.json (iOS-type key) -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="GOOGLE_REDIRECT_SCHEME" />
+            </intent-filter>
+            <!-- GOOGLE-REDIRECT-END -->
+            <!-- "Share" from any app sends the file(s) to the PC. -->
+            <intent-filter android:label="Send to PC">
+                <action android:name="android.intent.action.SEND" />
+                <action android:name="android.intent.action.SEND_MULTIPLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="*/*" />
+            </intent-filter>
+        </activity>
+        <!-- The app's icon on the home screen: one alias per icon the person can pick (Look and language → App icon).
+             Exactly one is switched on at a time (MainActivity.setAppIcon); "Ocean" is the one a new install starts
+             with. The drawings come from tools/icons/make-icons.js. ".IconClassic" carried the app's first picture
+             (now in backup/photo); it is not offered any more and shows the new icon, so a phone that had it chosen
+             still has an icon after the update. -->
+        <activity-alias android:name=".IconOcean" android:targetActivity=".MainActivity" android:exported="true"
+            android:enabled="true" android:icon="@mipmap/ic_app_ocean" android:roundIcon="@mipmap/ic_app_ocean">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+        <activity-alias android:name=".IconKit" android:targetActivity=".MainActivity" android:exported="true"
+            android:enabled="false" android:icon="@mipmap/ic_app_kit" android:roundIcon="@mipmap/ic_app_kit">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+        <activity-alias android:name=".IconPaper" android:targetActivity=".MainActivity" android:exported="true"
+            android:enabled="false" android:icon="@mipmap/ic_app_paper" android:roundIcon="@mipmap/ic_app_paper">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+        <activity-alias android:name=".IconGlow" android:targetActivity=".MainActivity" android:exported="true"
+            android:enabled="false" android:icon="@mipmap/ic_app_glow" android:roundIcon="@mipmap/ic_app_glow">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+        <activity-alias android:name=".IconMidnight" android:targetActivity=".MainActivity" android:exported="true"
+            android:enabled="false" android:icon="@mipmap/ic_app_midnight" android:roundIcon="@mipmap/ic_app_midnight">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+        <activity-alias android:name=".IconSunset" android:targetActivity=".MainActivity" android:exported="true"
+            android:enabled="false" android:icon="@mipmap/ic_app_sunset" android:roundIcon="@mipmap/ic_app_sunset">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+        <activity-alias android:name=".IconClassic" android:targetActivity=".MainActivity" android:exported="true"
+            android:enabled="false" android:icon="@mipmap/ic_app_ocean" android:roundIcon="@mipmap/ic_app_ocean">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <!-- "Share" → "Send to a device…": the app asks where (the PC, or a phone, tablet or laptop through it). -->
+        <activity-alias
+            android:name=".SendToDevice"
+            android:targetActivity=".MainActivity"
+            android:label="Send to a device…"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <action android:name="android.intent.action.SEND_MULTIPLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="*/*" />
+            </intent-filter>
+        </activity-alias>
+
+        <!-- Shows the cloud drives in the phone's Files app and in every app's Open / Save picker. -->
+        <provider
+            android:name=".CloudDocumentsProvider"
+            android:authorities="com.cloudssd.mobile.documents"
+            android:exported="true"
+            android:grantUriPermissions="true"
+            android:permission="android.permission.MANAGE_DOCUMENTS">
+            <intent-filter>
+                <action android:name="android.content.action.DOCUMENTS_PROVIDER" />
+            </intent-filter>
+        </provider>
+
+        <!-- Camera backup, run by Android in the background (see CameraBackup). -->
+        <service
+            android:name=".CameraBackupService"
+            android:exported="true"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
+        <!-- "Your PC is ringing this phone" over the lock screen, with a big "Found it" button (see PhoneRinger). -->
+        <activity
+            android:name=".RingActivity"
+            android:exported="false"
+            android:excludeFromRecents="true"
+            android:launchMode="singleTask"
+            android:taskAffinity="com.cloudssd.mobile.ring"
+            android:showWhenLocked="true"
+            android:turnScreenOn="true"
+            android:theme="@android:style/Theme.Material.NoActionBar" />
+        <!-- Synced folders (phone folder <-> PC folder), run by Android every hour on Wi-Fi (see FolderSync). -->
+        <service
+            android:name=".FolderSyncService"
+            android:exported="true"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
+
+        <!-- Keeps transfers going while the app is closed (see TransferHub). -->
+        <service
+            android:name=".TransferService"
+            android:exported="false"
+            android:foregroundServiceType="dataSync" />
+        <!-- Play on phone: the PC's game full screen, its sound, and touches back to the PC. -->
+        <activity
+            android:name=".StreamActivity"
+            android:exported="false"
+            android:screenOrientation="sensorLandscape"
+            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden|smallestScreenSize"
+            android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen" />
+        <!-- "Allow 1 hour" / "Deny" on the note that the PC wants to see this phone's files. -->
+        <receiver android:name=".PeerDecisionReceiver" android:exported="false" />
+        <!-- Keeps answering the PC (Ring, files, clipboard) with the app closed, only while that is wanted. -->
+        <service
+            android:name=".PeerLinkService"
+            android:exported="false"
+            android:foregroundServiceType="connectedDevice" />
+        <!-- After a restart or an update: "Find my phone" listens again without opening the app. -->
+        <receiver android:name=".BootReceiver" android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+            </intent-filter>
+        </receiver>
+    </application>
+</manifest>

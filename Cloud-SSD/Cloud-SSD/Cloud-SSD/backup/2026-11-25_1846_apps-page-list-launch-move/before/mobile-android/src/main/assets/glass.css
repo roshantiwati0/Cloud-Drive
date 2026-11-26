@@ -1,0 +1,136 @@
+/* =============================================================================================================
+   Glass effect — More → Look and language → Glass effect (off by default). app.js sets data-glass="on" on <html>.
+
+   Frosted glass, as phones show it: the page gets a soft coloured backdrop; the bars that float over the content
+   (search bar, bottom bar, a page's title bar, the round send button, the small notes) blur what scrolls behind
+   them; cards are see-through panes with a thin bright edge. Works in each look (Ocean, Colourful, Midnight): only
+   fills, edges and shadows change here — sizes, shapes and text colours stay the look's.
+
+   Loaded after pages.css. Every rule starts with :root[data-glass="on"], so with the switch off nothing here applies.
+   ============================================================================================================= */
+
+/* ---------------------------------------------------------------- 1. the glass of each look */
+:root[data-glass="on"] {
+  --glass-blur: blur(22px) saturate(170%);
+  --glass-blur-soft: blur(14px) saturate(150%);
+}
+:root[data-glass="on"][data-look="ac"],
+:root[data-glass="on"][data-look="saaf"] {
+  --glass-fill: rgba(255, 255, 255, 0.52);           /* cards */
+  --glass-fill-strong: rgba(255, 255, 255, 0.68);    /* bars over moving content */
+  --glass-edge: rgba(255, 255, 255, 0.85);
+  --glass-shadow: 0 8px 28px rgba(30, 64, 175, 0.10);
+  --glass-page: #EEF3FB;
+}
+:root[data-glass="on"][data-look="ac"] {
+  --glass-backdrop:
+    radial-gradient(60% 40% at 12% 18%, rgba(96, 165, 250, 0.45), transparent 70%),
+    radial-gradient(55% 38% at 92% 34%, rgba(129, 140, 248, 0.32), transparent 70%),
+    radial-gradient(70% 45% at 30% 88%, rgba(56, 189, 248, 0.30), transparent 72%);
+}
+:root[data-glass="on"][data-look="saaf"] {
+  --glass-backdrop:
+    radial-gradient(60% 40% at 10% 16%, rgba(244, 114, 182, 0.30), transparent 70%),
+    radial-gradient(55% 38% at 94% 30%, rgba(96, 165, 250, 0.36), transparent 70%),
+    radial-gradient(60% 40% at 80% 86%, rgba(52, 211, 153, 0.28), transparent 72%),
+    radial-gradient(55% 40% at 14% 80%, rgba(251, 191, 36, 0.24), transparent 72%);
+}
+:root[data-glass="on"][data-look="raat"] {
+  --glass-fill: rgba(30, 41, 59, 0.42);
+  --glass-fill-strong: rgba(15, 23, 36, 0.60);
+  --glass-edge: rgba(255, 255, 255, 0.12);
+  --glass-shadow: 0 10px 30px rgba(0, 0, 0, 0.40);
+  --glass-page: #0B0F17;
+  --glass-backdrop:
+    radial-gradient(60% 40% at 10% 16%, rgba(45, 212, 191, 0.30), transparent 70%),
+    radial-gradient(55% 38% at 94% 32%, rgba(99, 102, 241, 0.30), transparent 70%),
+    radial-gradient(70% 45% at 34% 90%, rgba(14, 165, 233, 0.24), transparent 72%);
+}
+
+/* ---------------------------------------------------------------- 2. the backdrop behind everything */
+:root[data-glass="on"] body { background-color: var(--glass-page); }
+:root[data-glass="on"] body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: var(--glass-backdrop);
+  pointer-events: none;
+}
+/* A page (a sheet opened as a page) covers the screen: it carries the same backdrop. */
+:root[data-glass="on"] .as-page:not(#file-viewer-modal) { background: var(--glass-backdrop), var(--glass-page) !important; }
+:root[data-glass="on"] .as-page:not(#file-viewer-modal) > :first-child { background: transparent !important; }
+
+/* ---------------------------------------------------------------- 3. bars over moving content: real frosted glass */
+:root[data-glass="on"][data-look] :is(.material-bottom-nav, .page-bar, .phone-nav-bar.sticky-bar, .ssd-top-bar, .transfer-pill, .toast) {
+  background: var(--glass-fill-strong) !important;
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  border-color: var(--glass-edge) !important;
+  box-shadow: var(--glass-shadow);
+}
+:root[data-glass="on"][data-look] .search-bar-pill {
+  background: var(--glass-fill-strong) !important;
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-edge) !important;
+  box-shadow: var(--glass-shadow) !important;
+}
+/* The strip the search bar sits in (it stays at the top while the page scrolls): no solid block of colour with a hard
+   edge under it — what scrolls behind is blurred. Ocean keeps its blue band, as blue glass. */
+:root[data-glass="on"]:is([data-look="saaf"], [data-look="raat"]) .search-header {
+  background: transparent !important;
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+}
+:root[data-glass="on"][data-look="ac"] .search-header {
+  background: rgba(37, 99, 235, 0.80) !important;
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+}
+/* The bottom bar floats as a rounded pane in every look, so the page shows around and behind it. */
+:root[data-glass="on"][data-look="ac"] .material-bottom-nav,
+:root[data-glass="on"][data-look="saaf"] .material-bottom-nav {
+  left: 12px; right: 12px; bottom: 10px; width: auto;
+  border: 1px solid var(--glass-edge) !important;
+  border-radius: 26px;
+}
+:root[data-glass="on"][data-look="ac"] body,
+:root[data-glass="on"][data-look="saaf"] body { padding-bottom: 92px; }
+:root[data-glass="on"] .page-bar { border-bottom: 1px solid var(--glass-edge) !important; }
+/* The round send button: tinted glass. */
+:root[data-glass="on"][data-look] .material-fab {
+  -webkit-backdrop-filter: var(--glass-blur-soft);
+  backdrop-filter: var(--glass-blur-soft);
+  border: 1px solid var(--glass-edge);
+  box-shadow: var(--glass-shadow);
+}
+
+/* ---------------------------------------------------------------- 4. cards: see-through panes with a bright edge */
+:root[data-glass="on"][data-look] :is(
+  .hw-widget-card, .cat-grid-card, .pc-drive-row, .send-tile, .phone-quick-btn, .storage-usage-panel,
+  .xt-card, .xt-list, .xt-empty-card, .recent-empty-card,
+  .more-me, .more-row, .pc-connection-banner-card, .saver-card,
+  .explorer-item:not(.selected), .phone-item-row:not(.selected), .device-row, .drive-card, .gaming-hero-card, .remote-btn,
+  .settings-row, .perm-row, .perm-empty, .m3-sheet-row:not(.chosen), .look-card:not(.active), .offline-banner, .conn-settings-fold
+) {
+  background: var(--glass-fill) !important;
+  -webkit-backdrop-filter: var(--glass-blur-soft);
+  backdrop-filter: var(--glass-blur-soft);
+  border: 1px solid var(--glass-edge) !important;
+  box-shadow: var(--glass-shadow);
+}
+/* Rows inside a list card are part of that pane: no second layer of glass. */
+:root[data-glass="on"][data-look] .xt-list .xt-row { background: transparent; }
+/* Chips and pills: a lighter pane; the chosen one keeps the look's own fill. */
+:root[data-glass="on"][data-look] :is(.transfer-chip, .ssd-drive-pill):not(.active):not([aria-pressed="true"]) {
+  background: var(--glass-fill) !important;
+  border: 1px solid var(--glass-edge) !important;
+}
+/* Midnight: the icon circles and tinted buttons stay readable on the darker glass. */
+:root[data-glass="on"][data-look="raat"] :is(.hw-widget-card, .cat-grid-card, .more-row, .xt-card) { box-shadow: 0 6px 22px rgba(0, 0, 0, 0.30); }
+
+/* ---------------------------------------------------------------- 5. the switch in Look and language */
+.glass-row { display: flex; align-items: center; gap: 12px; }
+.glass-row .settings-row-text { flex: 1; min-width: 0; }
+.glass-row input { width: 22px; height: 22px; flex: none; accent-color: var(--md-sys-color-primary); }

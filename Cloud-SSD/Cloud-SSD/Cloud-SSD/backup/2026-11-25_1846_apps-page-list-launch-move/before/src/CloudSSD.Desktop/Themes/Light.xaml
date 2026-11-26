@@ -1,0 +1,55 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!--
+        Light palette, the "A+C" look: a pale grey page, white cards, and one colour (blue) for everything that is
+        chosen, active or tappable. Purple is the same blue: the look has one colour only. Status colours (success,
+        warning, danger) stay, a shade darker so text in them reads on white. The same keys as Dark.xaml.
+    -->
+    <Color x:Key="BgColor">#F4F6FA</Color>
+    <Color x:Key="SurfaceColor">#FFFFFF</Color>
+    <Color x:Key="Surface2Color">#F1F4F9</Color>
+    <Color x:Key="Surface3Color">#E8EEF7</Color>
+    <Color x:Key="BorderColor">#E2E7EF</Color>
+    <Color x:Key="TextColor">#0F172A</Color>
+    <Color x:Key="MutedColor">#556070</Color>
+    <Color x:Key="DimColor">#6B7587</Color>
+    <Color x:Key="AccentColor">#2563EB</Color>
+    <Color x:Key="AccentHoverColor">#1D4ED8</Color>
+    <Color x:Key="AccentPressedColor">#1E40AF</Color>
+    <Color x:Key="PurpleColor">#2563EB</Color>
+    <!-- "Online", "done", "saved" in the one colour too; only warnings and errors keep their own. -->
+    <Color x:Key="SuccessColor">#2563EB</Color>
+    <Color x:Key="WarningColor">#B45309</Color>
+    <Color x:Key="DangerColor">#DC2626</Color>
+    <Color x:Key="GridLineColor">#22000000</Color>
+
+    <SolidColorBrush x:Key="Bg" Color="{StaticResource BgColor}" />
+    <SolidColorBrush x:Key="Surface" Color="{StaticResource SurfaceColor}" />
+    <SolidColorBrush x:Key="Surface2" Color="{StaticResource Surface2Color}" />
+    <SolidColorBrush x:Key="Surface3" Color="{StaticResource Surface3Color}" />
+    <SolidColorBrush x:Key="BorderBrush" Color="{StaticResource BorderColor}" />
+    <SolidColorBrush x:Key="Text" Color="{StaticResource TextColor}" />
+    <SolidColorBrush x:Key="Muted" Color="{StaticResource MutedColor}" />
+    <SolidColorBrush x:Key="Dim" Color="{StaticResource DimColor}" />
+    <SolidColorBrush x:Key="Accent" Color="{StaticResource AccentColor}" />
+    <SolidColorBrush x:Key="AccentHover" Color="{StaticResource AccentHoverColor}" />
+    <SolidColorBrush x:Key="AccentPressed" Color="{StaticResource AccentPressedColor}" />
+    <!-- The pale blue of tinted buttons, icon circles and chosen rows. -->
+    <SolidColorBrush x:Key="AccentSoft" Color="#E8F0FE" />
+    <SolidColorBrush x:Key="Purple" Color="{StaticResource PurpleColor}" />
+    <SolidColorBrush x:Key="PurpleSoft" Color="#E8F0FE" />
+    <SolidColorBrush x:Key="Success" Color="{StaticResource SuccessColor}" />
+    <SolidColorBrush x:Key="Warning" Color="{StaticResource WarningColor}" />
+    <SolidColorBrush x:Key="Danger" Color="{StaticResource DangerColor}" />
+    <SolidColorBrush x:Key="GridLine" Color="{StaticResource GridLineColor}" />
+    <!-- Text on the blue band and on blue buttons. -->
+    <SolidColorBrush x:Key="OnAccent" Color="#FFFFFF" />
+    <SolidColorBrush x:Key="OnAccentMuted" Color="#DCE6FD" />
+    <SolidColorBrush x:Key="BandBrush" Color="{StaticResource AccentColor}" />
+    <!-- The page title bar (Ocean: a slim blue bar; ThemeManager sets these per look): its text, the bar under the busy line, hover. -->
+    <SolidColorBrush x:Key="BandText" Color="#FFFFFF" />
+    <SolidColorBrush x:Key="BandTextMuted" Color="#DCE6FD" />
+    <SolidColorBrush x:Key="BandHover" Color="#33FFFFFF" />
+    <!-- The side menu and the bottom status line (see-through with the glass effect). -->
+    <SolidColorBrush x:Key="SidebarBg" Color="{StaticResource SurfaceColor}" />
+</ResourceDictionary>

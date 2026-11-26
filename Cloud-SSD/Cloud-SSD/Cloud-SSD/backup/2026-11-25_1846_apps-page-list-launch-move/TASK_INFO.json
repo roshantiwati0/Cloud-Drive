@@ -1,0 +1,9 @@
+﻿{
+    "name":  "apps-page-list-launch-move",
+    "agent":  "Claude",
+    "taskId":  "TASK-CLAUDE-APPS",
+    "prompt":  "Apps page: laptop ke apps apne aap list, ek click se chalu, laptop/cloud move",
+    "startTime":  "2026-11-25T18:46:42.8250705+05:30",
+    "backupDir":  "2026-11-25_1846_apps-page-list-launch-move",
+    "fileCount":  659
+}

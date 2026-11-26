@@ -37,7 +37,7 @@ public sealed class SsdFilesView : UserControl
     private readonly TextBlock _status;
     private readonly WrapPanel _crumbs;
     private readonly ListBox _list, _side;
-    private readonly Button _up, _send, _open, _show;
+    private readonly Button _up, _send, _open, _show, _gemini;
     private readonly Border _taskBox;
     private readonly TextBlock _taskTitle, _taskInfo;
     private readonly ProgressBar _taskBar;
@@ -119,13 +119,15 @@ public sealed class SsdFilesView : UserControl
         _send.Click += (_, _) => SendSelected();
         _open = Tool(T("Open"));
         _open.Click += (_, _) => OpenSelected();
+        _gemini = Tool("✨ " + T("Ask Gemini"));
+        _gemini.Click += (_, _) => OpenGeminiInsights();
         var selectAll = Tool(T("Select all"));
         selectAll.Click += (_, _) => { _list!.SelectAll(); _list.Focus(); };
         _show = Tool(T("Show in File Explorer"));
         _show.Click += (_, _) => ShowInExplorer();
         var refresh = Tool(T("Refresh"));
         refresh.Click += (_, _) => { if (_kind != null) LoadKind(_kind); else if (_path != null) Load(_path); else FillSide(); };
-        foreach (var b in new[] { _send, _open, selectAll, _show, refresh }) tools.Children.Add(b);
+        foreach (var b in new[] { _send, _open, _gemini, selectAll, _show, refresh }) tools.Children.Add(b);
         DockPanel.SetDock(tools, Dock.Top);
         root.Children.Add(tools);
 
@@ -133,6 +135,7 @@ public sealed class SsdFilesView : UserControl
         _list.SetResourceReference(BackgroundProperty, "Surface");
         _list.SetResourceReference(ForegroundProperty, "Text");
         _list.SetResourceReference(BorderBrushProperty, "BorderBrush");
+        _list.SelectionChanged += (_, _) => UpdateButtons();
         _list.MouseDoubleClick += (_, _) => OpenSelected();
         _list.KeyDown += (_, e) => { if (e.Key == Key.Enter) OpenSelected(); else if (e.Key == Key.Back) GoUp(); };
         root.Children.Add(_list);
@@ -234,6 +237,20 @@ public sealed class SsdFilesView : UserControl
     {
         _up.IsEnabled = _kind is null && _path != null && _root != null && !SamePath(_path, _root);
         _show.IsEnabled = _root != null;
+        _gemini.IsEnabled = Selected().Any(e => !e.IsDir);
+    }
+
+    private void OpenGeminiInsights()
+    {
+        var picked = Selected().Where(e => !e.IsDir).ToList();
+        if (picked.Count == 0)
+        {
+            _status.Text = T("Pick a file first to analyze with Gemini.");
+            return;
+        }
+        var target = picked[0];
+        var win = new GeminiInsightsWindow(_host, target.Path);
+        win.ShowDialog();
     }
 
     private static bool SamePath(string a, string b) =>
@@ -351,6 +368,18 @@ public sealed class SsdFilesView : UserControl
             }
             row.Children.Add(names);
             var item = new ListBoxItem { Content = row, Tag = e, Padding = new Thickness(8, 6, 8, 6), HorizontalContentAlignment = HorizontalAlignment.Stretch };
+            if (!e.IsDir)
+            {
+                var menu = new ContextMenu();
+                var geminiMi = new MenuItem { Header = "✨ " + T("Ask Gemini / AI Insights") };
+                geminiMi.Click += (_, _) =>
+                {
+                    var win = new GeminiInsightsWindow(_host, e.Path);
+                    win.ShowDialog();
+                };
+                menu.Items.Add(geminiMi);
+                item.ContextMenu = menu;
+            }
             System.Windows.Automation.AutomationProperties.SetName(item, e.Name);
             _list.Items.Add(item);
         }

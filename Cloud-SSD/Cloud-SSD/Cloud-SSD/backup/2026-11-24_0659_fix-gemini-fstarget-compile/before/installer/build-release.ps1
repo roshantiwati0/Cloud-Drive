@@ -1,0 +1,155 @@
+<#
+.SYNOPSIS
+  Builds the Cloud-SSD release: self-contained win-x64 publish of the desktop app and the cpx CLI into one folder,
+  bundles the checksum-verified rclone binary, documentation and install/uninstall scripts, and zips the result.
+.EXAMPLE
+  powershell -ExecutionPolicy Bypass -File installer\build-release.ps1
+#>
+param(
+    [string]$Configuration = "Release",
+    [string]$Version = "0.9.0",
+    [string]$WinFspVersion = "2.1.25156",
+    [switch]$SkipTests
+)
+$ErrorActionPreference = "Stop"
+$repo = Resolve-Path "$PSScriptRoot\.."
+$dist = Join-Path $repo "dist"
+$name = "Cloud-SSD-$Version-win-x64"
+$stage = Join-Path $dist $name
+
+Write-Host "== Cloud-SSD $Version release build ==" -ForegroundColor Cyan
+if (Test-Path $stage) { Remove-Item -Recurse -Force $stage }
+New-Item -ItemType Directory -Force $stage | Out-Null
+
+# 1. rclone: verify the bundled binary against the official SHA256SUMS before shipping it.
+$rclone = Join-Path $repo "tools\rclone\rclone.exe"
+$sums = Get-ChildItem (Join-Path $repo "tools\rclone") -Filter "SHA256SUMS.v*" | Select-Object -First 1
+if (-not (Test-Path $rclone) -or -not $sums) { throw "tools\rclone\rclone.exe or SHA256SUMS missing. Run installer\fetch-rclone.ps1 first." }
+$rcloneVersion = ($sums.Name -replace '^SHA256SUMS\.', '')
+& $rclone version | Select-Object -First 1 | Write-Host
+
+$dotnet = "dotnet"
+# The dotnet on PATH may be a runtime only (no SDK, so "test" and "publish" fail): then use the per-user SDK.
+$pathHasSdk = $false
+if (Get-Command dotnet -ErrorAction SilentlyContinue) {
+    try { $pathHasSdk = [bool](& dotnet --list-sdks 2>$null | Where-Object { $_ }) } catch { $pathHasSdk = $false }
+}
+if (-not $pathHasSdk -and (Test-Path "$env:LOCALAPPDATA\Microsoft\dotnet\dotnet.exe")) {
+    $dotnet = "$env:LOCALAPPDATA\Microsoft\dotnet\dotnet.exe"
+}
+
+# 2. Tests (unit tests always; integration tests need WinFsp and take several minutes).
+if (-not $SkipTests) {
+    & $dotnet test (Join-Path $repo "tests\CloudSSD.Tests") -c $Configuration --nologo -v q
+    if ($LASTEXITCODE -ne 0) { throw "Unit tests failed" }
+}
+
+# 3. Publish (self-contained so users do not need to install .NET).
+$tempStage = Join-Path ([System.IO.Path]::GetTempPath()) "cpx-stage-$Version"
+if (Test-Path $tempStage) { Remove-Item -Recurse -Force $tempStage }
+New-Item -ItemType Directory -Force $tempStage | Out-Null
+
+$common = @("-c", $Configuration, "-r", "win-x64", "--self-contained", "true", "-p:PublishReadyToRun=true", "-p:Version=$Version", "--nologo", "-v", "q", "-o", $tempStage)
+& $dotnet publish (Join-Path $repo "src\CloudSSD.Desktop\CloudSSD.Desktop.csproj") @common
+if ($LASTEXITCODE -ne 0) { throw "Desktop publish failed" }
+& $dotnet publish (Join-Path $repo "src\CloudSSD.Cli\CloudSSD.Cli.csproj") @common
+if ($LASTEXITCODE -ne 0) { throw "CLI publish failed" }
+
+Copy-Item (Join-Path $tempStage "*") $stage -Recurse -Force
+Remove-Item -Recurse -Force $tempStage
+
+# 4. rclone + notices.
+$toolDir = Join-Path $stage "tools\rclone"
+New-Item -ItemType Directory -Force $toolDir | Out-Null
+Copy-Item $rclone $toolDir -Force
+Copy-Item $sums.FullName $toolDir -Force
+$hash = (Get-FileHash (Join-Path $toolDir "rclone.exe") -Algorithm SHA256).Hash.ToLower()
+Set-Content (Join-Path $toolDir "README.txt") @"
+rclone $rcloneVersion (https://rclone.org), MIT License, Copyright (C) 2012 by Nick Craig-Wood.
+Downloaded from https://downloads.rclone.org/$rcloneVersion/ - the zip's SHA256 was verified against the official
+SHA256SUMS file (included). SHA256 of rclone.exe: $hash
+"@
+# The project docs were moved into docs\archive when the folder structure changed, so a document can live
+# in one of two places. Look in both, otherwise the release build stops on a missing file.
+function Find-Doc([string]$name) {
+    $root = Join-Path $repo $name
+    if (Test-Path $root) { return $root }
+    $archived = Join-Path $repo "docs\archive\$name"
+    if (Test-Path $archived) { return $archived }
+    return $null
+}
+
+$notices = Find-Doc "THIRD_PARTY_NOTICES.md"
+if (-not $notices) { throw "THIRD_PARTY_NOTICES.md not found (looked in the project root and in docs\archive)" }
+Copy-Item $notices $stage -Force
+
+# 4b. WinFsp's official installer goes along (tools\winfsp): the app and the install script put it on a PC that lacks it.
+# Only the genuine one: it must carry a valid signature of its maker.
+$winfspBundled = Get-ChildItem (Join-Path $repo "tools\winfsp") -Filter "winfsp*.msi" -ErrorAction SilentlyContinue | Sort-Object Name | Select-Object -Last 1
+if ($winfspBundled) {
+    $bundledSig = Get-AuthenticodeSignature $winfspBundled.FullName
+    if ($bundledSig.Status -ne "Valid" -or $bundledSig.SignerCertificate.Subject -notmatch "NAVIMATICS LLC") { throw "tools\winfsp\$($winfspBundled.Name): signature check failed ($($bundledSig.Status))" }
+    New-Item -ItemType Directory -Force (Join-Path $stage "tools\winfsp") | Out-Null
+    Copy-Item $winfspBundled.FullName (Join-Path $stage "tools\winfsp") -Force
+} else { Write-Host "tools\winfsp has no installer: the release will not be able to install WinFsp itself." -ForegroundColor Yellow }
+
+# Optional publisher Google OAuth client (Desktop app client JSON from Google Cloud, renamed). It is only useful to
+# everyone once the Google project is "In production"; in Testing mode only listed test users can sign in with it.
+$publisherKey = Join-Path $PSScriptRoot "google-client.json"
+if (Test-Path $publisherKey) {
+    Copy-Item $publisherKey (Join-Path $stage "google-client.json") -Force
+    Write-Host "Bundled publisher Google key (installer\google-client.json)." -ForegroundColor Yellow
+}
+
+# 5. Docs and scripts.
+foreach ($f in "README.md", "KNOWN_LIMITATIONS.md", "COMPATIBILITY.md", "BENCHMARKS.md", "TEST_REPORT.md", "BUILD_STATUS.md", "ARCHITECTURE.md") {
+    $doc = Find-Doc $f
+    if ($doc) { Copy-Item $doc $stage -Force }
+    else { Write-Host "Document not found (skipped): $f" -ForegroundColor Yellow }
+}
+New-Item -ItemType Directory -Force (Join-Path $stage "docs") | Out-Null
+Copy-Item (Join-Path $repo "docs\*") (Join-Path $stage "docs") -Recurse -Force
+Copy-Item (Join-Path $PSScriptRoot "Install-CloudSSD.ps1") $stage -Force
+Copy-Item (Join-Path $PSScriptRoot "Uninstall-CloudSSD.ps1") $stage -Force
+if (Test-Path (Join-Path $PSScriptRoot "cloudssd.cmd")) { Copy-Item (Join-Path $PSScriptRoot "cloudssd.cmd") $stage -Force }
+Set-Content (Join-Path $stage "Install.cmd") "@echo off`r`npowershell -NoProfile -ExecutionPolicy Bypass -File `"%~dp0Install-CloudSSD.ps1`" %*`r`npause"
+Remove-Item (Join-Path $stage "*.pdb") -ErrorAction SilentlyContinue
+
+# 6. Smoke test of the published binaries (no UI): CLI must run and find rclone/WinFsp.
+& (Join-Path $stage "cpx.exe") deps
+if ($LASTEXITCODE -ne 0) { throw "cpx deps failed in the published folder" }
+
+# 7. Zip + checksum.
+$zip = Join-Path $dist "$name.zip"
+if (Test-Path $zip) { Remove-Item $zip -Force }
+Compress-Archive -Path (Join-Path $stage "*") -DestinationPath $zip -CompressionLevel Optimal
+$zipHash = (Get-FileHash $zip -Algorithm SHA256).Hash.ToLower()
+Set-Content "$zip.sha256" "$zipHash  $name.zip"
+$size = [math]::Round((Get-Item $zip).Length / 1MB, 1)
+Write-Host "Release: $zip ($size MB)`nSHA256: $zipHash" -ForegroundColor Green
+
+# 8. Single-file setup.exe (Inno Setup 6) with the official WinFsp installer inside.
+$iscc = @("${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe", "$env:LOCALAPPDATA\Programs\Inno Setup 6\ISCC.exe") | Where-Object { Test-Path $_ } | Select-Object -First 1
+if (-not $iscc) {
+    Write-Host "Inno Setup not found: skipped setup.exe (install it with: winget install JRSoftware.InnoSetup)." -ForegroundColor Yellow
+    return
+}
+$winfspDir = Join-Path $repo "tools\winfsp"
+$winfspMsi = Join-Path $winfspDir "winfsp-$WinFspVersion.msi"
+if (-not (Test-Path $winfspMsi)) {
+    New-Item -ItemType Directory -Force $winfspDir | Out-Null
+    $tag = "v" + ($WinFspVersion -replace '\.\d+$', '')
+    Invoke-WebRequest "https://github.com/winfsp/winfsp/releases/download/$tag/winfsp-$WinFspVersion.msi" -OutFile $winfspMsi -UseBasicParsing
+}
+# Ship only the genuine installer: it must carry a valid Authenticode signature from WinFsp's publisher.
+$sig = Get-AuthenticodeSignature $winfspMsi
+if ($sig.Status -ne "Valid" -or $sig.SignerCertificate.Subject -notmatch "NAVIMATICS LLC") {
+    Remove-Item $winfspMsi -Force
+    throw "WinFsp installer signature check failed ($($sig.Status)); deleted it."
+}
+& $iscc /Q "/DAppVersion=$Version" "/DSourceDir=$stage" "/DWinFspMsi=$winfspMsi" "/O$dist" (Join-Path $PSScriptRoot "CloudSSD.iss")
+if ($LASTEXITCODE -ne 0) { throw "Inno Setup failed" }
+$setup = Join-Path $dist "Cloud-SSD-$Version-setup.exe"
+$setupHash = (Get-FileHash $setup -Algorithm SHA256).Hash.ToLower()
+Set-Content "$setup.sha256" "$setupHash  Cloud-SSD-$Version-setup.exe"
+Write-Host "Installer: $setup ($([math]::Round((Get-Item $setup).Length / 1MB, 1)) MB)`nSHA256: $setupHash" -ForegroundColor Green

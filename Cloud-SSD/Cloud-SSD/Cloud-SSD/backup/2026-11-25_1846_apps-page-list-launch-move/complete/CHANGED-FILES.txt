@@ -1,0 +1,27 @@
+﻿Work finished: 2026-11-25 19:42
+
+NEW files (9):
+  src\CloudSSD.App\AppCatalog.cs
+  src\CloudSSD.App\AppMover.cs
+  src\CloudSSD.Desktop\AppIcons.cs
+  src\CloudSSD.Desktop\LocalizationManager.Apps.cs
+  src\CloudSSD.Desktop\ViewModels\AppsViewModel.cs
+  src\CloudSSD.Desktop\Views\AppsView.xaml
+  src\CloudSSD.Desktop\Views\AppsView.xaml.cs
+  tests\CloudSSD.Tests\AppCatalogTests.cs
+  tests\CloudSSD.Tests\AppMoverTests.cs
+
+CHANGED files (8):
+  docs\CHALU_KAAM.md
+  docs\CLAUDE.md
+  src\CloudSSD.App\AppHost.cs
+  src\CloudSSD.Desktop\LocalizationManager.Devices.cs
+  src\CloudSSD.Desktop\MainWindow.xaml
+  src\CloudSSD.Desktop\ViewModels\GameLibraryViewModel.cs
+  src\CloudSSD.Desktop\ViewModels\MainViewModel.cs
+  src\CloudSSD.Desktop\Views\GameSettingsWindow.xaml.cs
+
+REMOVED files (0):
+
+The finished version of every new and changed file is in complete\files\ (same path as in the project).
+To go back to how it was: copy the same paths from before\ over the project, and delete the NEW files.

@@ -137,6 +137,14 @@ mein sign-in nahi kar sakta, isliye Phase 3 ki **asli jaanch** key ke baad hi ho
 
 ## Abhi ka haal  (har kadam ke baad badlo: `.work\haal.txt` badal kar `node .work\haal.js .work\haal.txt`)
 
+**CHALU (25 Nov 2026, 20:30 — Claude Code, TASK-CLAUDE-APPS-2): fix bana hai, install baaki.** Cloud wala program Apps → Open se kholne par window atakti thi (UI thread par `Process.Start`); fix `AppsViewModel.cs` mein hai, build + 692 tests pass, release `dist\` mein.
+Atka hai: purana `Cloud-SSD.exe` (PID 20292) kill nahi hota (Z: ki read par Windows ke andar atka), isliye naya build na install hota hai na chalta hai. **User ki haan par PC restart**, phir install + MiniMax se jaanch + `backup.ps1 validate` / `complete` (folder `2026-11-25_2012_apps-open-from-cloud-froze-window`, abhi sirf `before\`). Byora: `docs\CLAUDE.md` ka aakhri hissa.
+
+**Sabse naya (25 Nov 2026, 19:50 — Claude Code, TASK-CLAUDE-APPS): "Apps" page ban gaya, asli PC par jaancha, backup band. Koi kaam chalu nahi.**
+Kya bana: sidebar mein Apps (laptop ke program apne aap list, Open, Play as game, Move to cloud / Bring back to this PC). Poora byora: `docs\CLAUDE.md` ka aakhri hissa aur `backup\2026-11-25_1846_apps-page-list-launch-move\complete\README.md`.
+Bacha: (1) user ko Cloud Drives → "Switch to my own Google key" dabana hai (teeno account shared key par, 403 aata hai; key ki JSON Downloads mein hai); (2) Charan 3 = Steam / Epic ke games (is PC par nahi hain, isliye nahi bana); (3) commit / push nahi hua.
+Dhyan: `%USERPROFILE%\Cloud-SSD-atki-files` mein user ki 10 GB purani upload-line wali files rakhi hain (Cloud-Drive.zip 8.9 GB, MiniMax Code, NOVA AI.zip). Inhe mat mitana.
+
 **Aakhri badlaav:** 17 Nov 2026, 03:00 — Claude Code, K session (firewall rule joda + phone ki local-network rok hatayi; phone ab ghar ke Wi-Fi se juda hai): **bina-key wala kaam (K1–K5, K7) poora, asli phone par jaancha, backup band.** Koi kaam chalu nahi.
 
 **Aakhri kaam (poora):** band PC ki files phone se — **bina Google key** wala raasta (user ne 14 Nov 16:22 par kaha: key ke bina karo).
@@ -878,3 +886,41 @@ B ne `p3-pc.js`). B ne 3.1 aur 3.2 kiya; 3.3 se aage A ne. Ek hi file do log na 
   Nateeja `%LOCALAPPDATA%\Cloud-SSD\speed-check.json` + log "Speed check: …"; nayi gadbad par note + ghanti. **`RULE.md` hissa 10 "Speed Lock": har agent padhe** (kya nahi chhedna, naape hue number, pehle / baad naap).
 - **Installed build:** 14:41:31 (release SHA256 `c1577a16…ae1c73a2`). App chal raha hai; Fast drive W:; lock wapas `TASK-CLAUDE-CLI-TUI-3`.
 - **Agla kadam (koi bhi session):** kuch bhi mount / warm-up / hybrid chhedne se pehle `speed-check.json` padho aur baad mein dobara chalao. Restart user ki haan par. Baaki list upar wali hi hai.
+
+---
+
+## Kaam: Gemini AI File Insights & Assistant (Antigravity) - COMPLETE
+- **Kab:** 24 Nov 2026, 06:34 - 07:48 IST · TASK-ANTIGRAVITY-GEMINI-1 · backup `backup\2026-11-24_0634_gemini-api-feature` (APPROVED 661/661 pass, 0 warnings)
+- **User:** "/plan @[plugin:gemini-api] Suggest and add a Gemini API feature to my open project"
+- **Bana:**
+  1. `GeminiSettings` (`ApiKey`, `Model = "gemini-4-hydrogen"`, `Enabled`, `Temperature = 0.2`, `MaxOutputTokens = 2048`) in `CloudSSD.Core`.
+  2. `GeminiService` in `CloudSSD.App`: Multimodal file summarization, interactive Q&amp;A ("Chat with File"), semantic tag generation, connection testing.
+  3. `LocalMobileBridgeService.Gemini.cs`: REST endpoints `/api/gemini/summarize`, `/api/gemini/ask`, `/api/gemini/tags`, `/api/gemini/status`, `/api/gemini/test`, `/api/gemini/config`.
+  4. Desktop WPF: `GeminiInsightsWindow.cs` (modal dialog with Summary, Q&amp;A, and Smart Tags tabs + API key prompt), "✨ Ask Gemini" tool button &amp; context menu in `SsdFilesView.cs`, and Gemini AI Settings card in `SettingsView.xaml` / `ConfigViewModels.cs`.
+  5. CLI: `cloudssd gemini summary/ask/tags/test` in `GeminiCli.cs`, `Commands.cs`, and `Program.cs`.
+  6. Phone &amp; Web app: "✨ Ask Gemini" action sheet and bottom-sheet interactive dialog in `fs.js` (both in `mobile-android/src/main/assets` and `src/CloudSSD.Desktop/wwwroot/mobile`).
+  7. Unit tests: 21 new tests in `GeminiServiceTests.cs` (661/661 passed).
+- **Status:** COMPLETED &amp; APPROVED. Lock released.
+
+## Do session ek saath (25 Nov 2026, 19:20) — TASK-CLAUDE-OFFLINE-XFER (phone ↔ PC transfer bina internet)
+
+Ek Claude session `TASK-CLAUDE-APPS` (Apps page; lock usi ka hai, `docs\CURRENT_TASK.json` wapas uska likha) chal raha hai.
+Doosra session **TASK-CLAUDE-OFFLINE-XFER** saath mein chal raha hai; backup `backup\2026-11-25_1919_phone-pc-transfer-bina-internet`.
+Bantwara — OFFLINE-XFER sirf yeh files chhuta hai:
+`src\CloudSSD.App\LocalMobileBridgeService.Upload.cs`, `.Files.cs` (sirf `ReceiveFileAsync`), `.Share.cs` (sirf log line),
+`LocalMobileBridgeService.cs` (sirf purana `/api/upload` hissa), `mobile-android\src\main\java\com\cloudssd\mobile\{TransferHub,PcLink,LinkScanner,Uploader,TransferService,MainActivity}.java`,
+`mobile-android\src\main\AndroidManifest.xml`, `tests\CloudSSD.Tests\MobileBridgeResumeTests.cs`.
+Yeh `AppHost.cs`, `src\CloudSSD.Desktop\*`, `AppCatalog.cs`, `AppMover.cs` nahi chhuta. PC app band / install karne se pehle yahan likhega.
+Plan: `%USERPROFILE%\.claude\plans\mujhepure-app-ko-offilerakna-shimmering-wave.md`.
+
+**OFFLINE-XFER, 25 Nov 19:35:** PC wala code + tests ho gaye (build 0/0, C# 691/691). User ne kaha: PC app abhi install karo (Apps page ka jitna bana hai woh bhi build mein aayega) aur Android tools download karke APK banao. Ab: release build -> app band -> install -> chalu.
+
+**OFFLINE-XFER, 25 Nov 20:25 — haal (kaam ADHOORA, backup `2026-11-25_1919_phone-pc-transfer-bina-internet` mein sirf `before\`):**
+- PC code + tests ho gaye: `LocalMobileBridgeService.Upload.cs` (nayi request purani chup request se upload le leti hai, 409 mein asli `offset`, 60 s idle timeout `UploadIdleTimeout`, log lines), `.Files.cs` / `LocalMobileBridgeService.cs` (wahi idle timeout), `.Share.cs` (log line), `tests\CloudSSD.Tests\MobileBridgeResumeTests.cs` (+2 test). Build 0/0, C# 691/691. Yeh build (dist 19:36) installed hai (APPS session ne 19:39 par lagaya).
+- Phone Java LIKHA par **compile nahi hua** (is PC par JDK 17 / Android SDK nahi): `TransferHub.java` (`forCloudFolder`: PC ke liye bheji file Drive par nahi jaati), `PcLink.java` (`findOnLinks`: naya IP link par khud dhoondhta hai), `LinkScanner.java` (`listening`), `Uploader.java` (409 bina offset = PC se poochho; tooti connection par wahin se aage), `TransferService.java` (WakeLock + WifiLock), `AndroidManifest.xml` (`WAKE_LOCK`). `MainActivity.java` nahi badla.
+- Android tools ka download `%USERPROFILE%\Android-tools\dl` mein (script: session scratchpad `get-android-tools.ps1`; resume hota hai). platform-tools aa gaya; build-tools, platform-36, jdk17 baaki. Hotspot ~65 kbps tha: ghanton lagenge. Baad mein: zip kholo -> `Sdk\build-tools\35.0.0`, `Sdk\platforms\android-36`, JDK -> `mobile-android\build-apk.ps1 -Sdk ... -Jdk ...`.
+- **Gadbad:** 20:06 par `cpx stop` ke baad PC app (PID 20292) band hote waqt Windows mein atak gaya (1 thread, kill nahi hota, port 8090 aur `instance.lock` pakde hai) -> naya app chalu nahi hota. Z:/Y: (rclone 14760 / 2464) chal rahe hain aur jawab dete hain. Theek karne ka raasta: PC restart (user ki haan par).
+- **Mila:** Mirror (`Settings.Mirror.Paused = false`, phone ne 24 Nov ko "Files when it is off" haan kaha) `rclone copy C:\ -> gdrive:Cloud-SSD Devices/...` chala raha tha, aur app ke har restart par purana copy process lawaris reh jata tha (3 ek saath: 18:45, 19:08, 19:42). Teeno band kiye. Yeh hotspot ka data khata hai; bug: app band hone par mirror ka rclone band nahi hota.
+- Baaki: PC restart -> app chalu -> APK build + phone par install -> asli 2 GB jaanch (plan ki "Jaanch") -> `backup.ps1 complete` + `validate` -> `docs\CLAUDE.md` entry.
+
+**OFFLINE-XFER, 26 Nov 08:05:** Android tools aa gaye (%USERPROFILE%\Android-tools), APK bana (.work\apk\Cloud-SSD-Mobile.apk, copy Downloads\Cloud-SSD-Mobile-naya.apk), atka app khud hata, app 07:57 se naye build par chal raha hai, APK ka offer phone ko bheja (cpx send). Baaki: user phone par accept + install kare -> asli badi file ki jaanch -> backup complete. Poora byora docs\CLAUDE.md mein.

@@ -169,6 +169,8 @@ public static partial class LocalizationManager
         Merge("हिन्दी (Hindi)", PeerTextsHindi);
         Merge("Hinglish", ExtraTextsHinglish);
         Merge("हिन्दी (Hindi)", ExtraTextsHindi);
+        Merge("Hinglish", AppsTextsHinglish);
+        Merge("हिन्दी (Hindi)", AppsTextsHindi);
     }
 
     private static void Merge(string language, IReadOnlyDictionary<string, string> extra)

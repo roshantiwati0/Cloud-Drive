@@ -1,0 +1,9 @@
+﻿Work: apps-page-list-launch-move
+Agent: Claude
+TaskId: TASK-CLAUDE-APPS
+Source as it was before the work started: 659 files, 13.4 MB.
+Taken: 2026-11-25 18:46
+
+The folder "before" is never changed. When the work is ready, run:
+  tools\backup\backup.ps1 complete -Folder "2026-11-25_1846_apps-page-list-launch-move"
+and write complete\README.md.

@@ -362,3 +362,56 @@ Poore project aur compiled binary files ki gehri jaanch ki gayi:
   - Authored structured typed JSON specification in `.archify/architecture-cloud-drive-system-20261116-114700/candidate.json`.
   - Validated architecture with `archify validate architecture`: passed all composition and layout gates.
   - Rendered standalone explorable HTML with pan/zoom, dark/light themes, and interactive card inspection.
+
+---
+
+### [Task ID: TASK-ANTIGRAVITY-GEMINI-1] Gemini AI File Insights & Assistant
+- **Date & Time:** 2026-11-24 07:48 IST
+- **Agent & Model:** Antigravity (Gemini 3.8 Flash High)
+- **Prompt:** "Suggest and add a Gemini API feature to my open project"
+- **Files Inspected:** `RULE.md`, `README.md`, `CURRENT_TASK.json`, `CHALU_KAAM.md`, `src/CloudSSD.Core/Settings.cs`, `src/CloudSSD.App/AppHost.cs`, `src/CloudSSD.App/LocalMobileBridgeService.cs`, `src/CloudSSD.Desktop/Views/SsdFilesView.cs`, `src/CloudSSD.Desktop/Views/SettingsView.xaml`, `src/CloudSSD.Desktop/ViewModels/ConfigViewModels.cs`, `src/CloudSSD.Cli/Commands.cs`, `src/CloudSSD.Cli/Program.cs`, `mobile-android/src/main/assets/fs.js`, `src/CloudSSD.Desktop/wwwroot/mobile/fs.js`
+- **Files Created / Modified:**
+  - `src/CloudSSD.Core/Settings.cs` (Added `GeminiSettings` with ApiKey, Model `gemini-4-hydrogen`, Enabled, Temperature, MaxOutputTokens)
+  - `src/CloudSSD.App/Gemini/GeminiService.cs` (Created multimodal file analysis, structured executive summary, file Q&amp;A, and auto-tagging service)
+  - `src/CloudSSD.App/AppHost.cs` (Registered `GeminiService` in `AppHost`)
+  - `src/CloudSSD.App/LocalMobileBridgeService.cs` &amp; `LocalMobileBridgeService.Cli.cs` (Added route dispatching for `/api/gemini/*` endpoints)
+  - `src/CloudSSD.App/LocalMobileBridgeService.Gemini.cs` (Implemented `/api/gemini/summarize`, `/api/gemini/ask`, `/api/gemini/tags`, `/api/gemini/status`, `/api/gemini/test`, `/api/gemini/config`)
+  - `src/CloudSSD.Desktop/Views/GeminiInsightsWindow.cs` (Created modern WPF dialog for file summary, interactive Q&amp;A, and tag chips)
+  - `src/CloudSSD.Desktop/Views/SsdFilesView.cs` (Added "✨ Ask Gemini" toolbar button and right-click context menu)
+  - `src/CloudSSD.Desktop/Views/SettingsView.xaml` &amp; `ViewModels/ConfigViewModels.cs` (Added Gemini AI settings card with API key, model selector, and connection test)
+  - `src/CloudSSD.Cli/GeminiCli.cs`, `Commands.cs`, `Program.cs` (Added CLI command `cloudssd gemini summary/ask/tags/test`)
+  - `mobile-android/src/main/assets/fs.js` &amp; `src/CloudSSD.Desktop/wwwroot/mobile/fs.js` (Added "✨ Ask Gemini" bottom-sheet modal and Q&amp;A chat)
+  - `tests/CloudSSD.Tests/GeminiServiceTests.cs` (Added 21 unit tests covering settings, MIME detection, text evaluation, and routes)
+- **Backup Folder:** `backup/2026-11-24_0634_gemini-api-feature`
+- **Validation Result:** APPROVED (C# build passed: 0 warnings, 0 errors; 661/661 unit tests passed)
+- **Summary of Changes:** Successfully added full-stack Gemini API integration into Cloud-SSD across Desktop WPF, Local Mobile Bridge, Web/Android app, and CLI.
+
+
+---
+
+### [TASK-AGY-BUILD-001] Fix Compilation, Build Latest Release 0.9.0 & Install to PC
+- **Date & Time:** 2026-11-24 08:00 IST
+- **Agent & Model:** Antigravity (Gemini 3.8 Flash)
+- **Prompt:** new app bana kar install karo sabse letest wala banao or install karo
+- **Files Inspected:**
+  - `RULE.md`
+  - `docs/CHALU_KAAM.md`
+  - `src/CloudSSD.App/LocalMobileBridgeService.Gemini.cs`
+  - `installer/build-release.ps1`
+  - `installer/Install-CloudSSD.ps1`
+- **Files Created / Modified:**
+  - `src/CloudSSD.App/LocalMobileBridgeService.Gemini.cs` (Fixed CS1061: target.Path -> target.FullPath)
+  - `dist/Cloud-SSD-0.9.0-win-x64/*` (Published clean self-contained win-x64 release)
+  - `dist/Cloud-SSD-0.9.0-setup.exe` (Compiled Inno Setup standalone installer)
+  - `releases/Cloud-SSD-0.9.0-setup.exe` (Synced installer with SHA256)
+  - `releases/Cloud-SSD-0.9.0-win-x64.zip` (Synced portable release zip with SHA256)
+- **Backup Folder:** `backup/2026-11-24_0659_fix-gemini-fstarget-compile`
+- **Validation Result:** APPROVED (661/661 tests passed, 0 warnings, 0 failures)
+- **Summary of Changes:**
+  - Setup .NET 10.0.404 SDK and Inno Setup 6.
+  - Fixed FsTarget property error in `LocalMobileBridgeService.Gemini.cs`.
+  - Built latest self-contained Release binaries (`Cloud-SSD.exe`, `cpx.exe`, `CloudSSD.*.dll`).
+  - Bundled verified `rclone.exe` v1.75.2 and signed `winfsp-2.1.25156.msi`.
+  - Built official `Cloud-SSD-0.9.0-setup.exe` (68.3 MB) and `Cloud-SSD-0.9.0-win-x64.zip` (92.7 MB).
+  - Installed latest build to `%LOCALAPPDATA%\Programs\Cloud-SSD\` and launched the app.
+- **Next Steps / Remaining Work:** App is running live with mounted virtual drives Y: and Z:.

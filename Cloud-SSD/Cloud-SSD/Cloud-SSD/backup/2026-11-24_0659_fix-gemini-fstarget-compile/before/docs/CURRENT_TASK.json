@@ -1,0 +1,12 @@
+﻿{
+    "active":  true,
+    "taskId":  "TASK-ANTIGRAVITY-GEMINI-1",
+    "taskTitle":  "gemini-api-feature",
+    "agent":  "Antigravity",
+    "startTime":  "2026-11-24T06:35:05.9440141+05:30",
+    "backupFolder":  "2026-11-24_0634_gemini-api-feature",
+    "targetFiles":  {
+
+                    },
+    "status":  "IN_PROGRESS"
+}

@@ -83,8 +83,8 @@ public sealed partial class GameLibraryViewModel : PageViewModel
         var mount = Host.Settings.Mounts.FirstOrDefault(m => m.Id == g.MountId);
         var summary = Host.Profiles.Summary(g.Id, Host.Settings.Streaming.StartupWindow);
         Details.ReplaceWith([
-            new("Drive", mount != null ? $"{mount.DisplayName} ({mount.RemoteSpec})" : "missing drive"),
-            new("Folder", string.IsNullOrEmpty(g.RootPath) ? "(drive root)" : g.RootPath),
+            new("Drive", mount != null ? $"{mount.DisplayName} ({mount.RemoteSpec})" : OnThisPc(g) ? "This PC's own disk" : "missing drive"),
+            new("Folder", OnThisPc(g) ? g.LocalRoot! : string.IsNullOrEmpty(g.RootPath) ? "(drive root)" : g.RootPath),
             new("Executable", g.Executable ?? "not found"),
             new("Arguments", string.IsNullOrWhiteSpace(g.Arguments) ? "—" : g.Arguments),
             new("Mode", Selected.Mode + (g.LocalRoot != null && g.Mode != ExecutionMode.CloudDirect ? $" · {g.LocalRoot}" : "")),
@@ -99,6 +99,9 @@ public sealed partial class GameLibraryViewModel : PageViewModel
         ReadinessDetail = g.ReadinessDetail ?? "Run Optimize & Prepare to check readiness.";
         LastResult = g.LastLaunchResult ?? "Never launched.";
     }
+
+    /// <summary>Added from the Apps page while its files are on this PC's own disk: no cloud drive behind it.</summary>
+    private static bool OnThisPc(GameEntry g) => g.MountId.Length == 0 && g.Mode == ExecutionMode.FullLocal && g.LocalRoot != null;
 
     [RelayCommand]
     private async Task AddGame()
@@ -124,6 +127,7 @@ public sealed partial class GameLibraryViewModel : PageViewModel
     {
         if (Selected is null) return;
         var g = Selected.Entry;
+        if (OnThisPc(g)) { Say("It is on this PC's own disk: nothing to prepare.", "ok"); return; }
         var w = new Views.PrepareWindow(Host, g) { Owner = System.Windows.Application.Current.MainWindow };
         w.ShowDialog();
         Reload();
@@ -179,6 +183,7 @@ public sealed partial class GameLibraryViewModel : PageViewModel
     {
         if (Selected is null) return;
         var g = Selected.Entry;
+        if (OnThisPc(g)) { Say("It is on this PC's own disk: nothing to analyze.", "ok"); return; }
         await RunAsync(async () =>
         {
             var fresh = await Host.AddGameAsync(g.MountId, g.RootPath, g.Name);

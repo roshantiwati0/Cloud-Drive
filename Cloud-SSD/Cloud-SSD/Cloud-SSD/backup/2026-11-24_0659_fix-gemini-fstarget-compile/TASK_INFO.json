@@ -1,0 +1,9 @@
+﻿{
+    "name":  "fix-gemini-fstarget-compile",
+    "agent":  "Antigravity",
+    "taskId":  "TASK-AGY-BUILD-001",
+    "prompt":  "",
+    "startTime":  "2026-11-24T06:59:57.7300508+05:30",
+    "backupDir":  "2026-11-24_0659_fix-gemini-fstarget-compile",
+    "fileCount":  656
+}

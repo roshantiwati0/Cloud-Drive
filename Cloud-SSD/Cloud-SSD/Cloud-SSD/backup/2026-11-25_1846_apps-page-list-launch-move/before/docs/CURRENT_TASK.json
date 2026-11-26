@@ -1,0 +1,12 @@
+﻿{
+  "active": false,
+  "taskId": "TASK-AGY-BUILD-001",
+  "taskTitle": "fix-gemini-fstarget-compile-and-install-latest",
+  "agent": "Antigravity",
+  "startTime": "2026-11-24T06:59:00+05:30",
+  "backupFolder": "2026-11-24_0659_fix-gemini-fstarget-compile",
+  "targetFiles": [
+    "src/CloudSSD.App/LocalMobileBridgeService.Gemini.cs"
+  ],
+  "status": "APPROVED"
+}

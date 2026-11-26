@@ -43,9 +43,11 @@ public sealed class AppHost : IAsyncDisposable
         CacheIndex = new CacheIndex();
         MobileBridge = new LocalMobileBridgeService(this, LoggerFactory.CreateLogger<LocalMobileBridgeService>());
         Offloader = new SmartStorageOffloaderService(this, LoggerFactory.CreateLogger<SmartStorageOffloaderService>());
+        AppMover = new AppMover(this, LoggerFactory.CreateLogger<AppMover>());
         Mirror = new Mirror.DeviceMirrorService(this, LoggerFactory.CreateLogger<Mirror.DeviceMirrorService>());
         Hybrid = new Hybrid.HybridDriveService(this, LoggerFactory.CreateLogger<Hybrid.HybridDriveService>());
         Space = new SpaceService(this);
+        Gemini = new Gemini.GeminiService(this, LoggerFactory.CreateLogger<Gemini.GeminiService>());
         Engine = new StreamingEngine(Settings.Streaming, Settings.Network, Profiles,
             new MountReadExecutor(id => Mounts.Get(id) is { State: MountState.Mounted } s ? s.Root : null, id => Mounts.Get(id)?.Attribution),
             FileSize, _ => !_diskPressure, CacheIndex.IsCached, LoggerFactory.CreateLogger<StreamingEngine>());
@@ -171,12 +173,16 @@ public sealed class AppHost : IAsyncDisposable
             revokeBack: deviceId => MobileBridge.RemoveDevice(deviceId)));
 
     public SmartStorageOffloaderService Offloader { get; }
+    /// <summary>Sends a program's folder to the cloud drive and brings it back (Apps page).</summary>
+    public AppMover AppMover { get; }
     /// <summary>"Files when it is off": the copy of this PC's own files in the cloud (runs only while a device and this PC both said yes).</summary>
     public Mirror.DeviceMirrorService Mirror { get; }
     /// <summary>The "fast drive": the drive letter is a folder on this PC, uploaded behind (off unless switched on in Cloud Drives).</summary>
     public Hybrid.HybridDriveService Hybrid { get; }
     /// <summary>Space &amp; RAM: where the disks' space and the RAM go, live; started by the desktop app (not by the command line).</summary>
     public SpaceService Space { get; }
+    /// <summary>Gemini AI assistant: file summarization, Q&amp;A, and semantic tagging.</summary>
+    public Gemini.GeminiService Gemini { get; }
     /// <summary>RAM auto mode and game mode. Kept here, not in a page, so the Dashboard can show what they last did.</summary>
     public MemoryRelief MemoryRelief { get; } = new();
     public GameMode GameMode { get; } = new();
@@ -704,6 +710,51 @@ public sealed class AppHost : IAsyncDisposable
         StateChanged?.Invoke();
         _ = launch.Completion.ContinueWith(t => OnLaunchEnded(g, t.Result), TaskScheduler.Default);
         return launch;
+    }
+
+    /// <summary>
+    /// Starts a program picked on the Apps page. Plain: like a double click in the Start menu. As a game: through
+    /// <see cref="PlayAsync"/>, so game mode frees RAM, uploads slow down and the run is remembered in the library.
+    /// </summary>
+    public async Task<LaunchSession?> LaunchAppAsync(AppItem app, bool asGame, CancellationToken ct = default)
+    {
+        if (!asGame)
+        {
+            AppCatalog.Start(app);
+            _log.LogInformation("Started {App} from the Apps page", app.Name);
+            return null;
+        }
+        return await PlayAsync(GameFor(app), ct);
+    }
+
+    /// <summary>The library entry of a program from the Apps page: the one it already has, or a new one that points at its folder.</summary>
+    public GameEntry GameFor(AppItem app)
+    {
+        static bool Same(string? a, string? b) => string.Equals(a?.Trim('/', '\\'), b?.Trim('/', '\\'), StringComparison.OrdinalIgnoreCase);
+        string exe = Path.GetRelativePath(app.InstallDir, app.ExePath).Replace('\\', '/');
+        var mount = Mounts.Sessions.FirstOrDefault(s => s.State == MountState.Mounted && app.ExePath.StartsWith(s.Root, StringComparison.OrdinalIgnoreCase));
+        GameEntry? g;
+        if (mount != null)
+        {
+            string root = Path.GetRelativePath(mount.Root, app.InstallDir).Replace('\\', '/');
+            g = Library.All().FirstOrDefault(x => x.MountId == mount.Id && Same(x.RootPath, root))
+                ?? new GameEntry { Name = app.Name, MountId = mount.Id, RootPath = root, Mode = ExecutionMode.CloudDirect, Arguments = app.Arguments, CloudSaveSyncEnabled = false };
+        }
+        else
+        {
+            g = Library.All().FirstOrDefault(x => x.MountId == "" && x.Mode == ExecutionMode.FullLocal && Same(x.LocalRoot, app.InstallDir) && Same(x.Executable, exe))
+                ?? new GameEntry
+                {
+                    Name = app.Name, Mode = ExecutionMode.FullLocal, LocalRoot = app.InstallDir, Arguments = app.Arguments, CloudSaveSyncEnabled = false,
+                    Readiness = ReadinessStatus.ReadyToLaunch, ReadinessDetail = "It is on this PC's own disk: nothing to prepare.",
+                };
+        }
+        g.Executable ??= exe;
+        if (g.WorkingDirectory == null && app.WorkDir.StartsWith(app.InstallDir.TrimEnd('\\') + "\\", StringComparison.OrdinalIgnoreCase)
+            && !Same(app.WorkDir, Path.GetDirectoryName(app.ExePath)))
+            g.WorkingDirectory = Path.GetRelativePath(app.InstallDir, app.WorkDir).Replace('\\', '/');
+        Library.Save(g);
+        return g;
     }
 
     private void OnLaunchEnded(GameEntry g, LaunchDiagnostics d)

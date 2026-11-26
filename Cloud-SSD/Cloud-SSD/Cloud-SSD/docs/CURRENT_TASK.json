@@ -1,14 +1,12 @@
 ﻿{
     "active":  true,
-    "taskId":  "TASK-CLAUDE-CLI-TUI-3",
-    "taskTitle":  "cli-key-problem-live-files",
-    "agent":  "Claude Code",
-    "startTime":  "2026-11-17T02:57:16.0987793+05:30",
-    "backupFolder":  "2026-11-17_0257_cli-key-problem-live-files",
-    "targetFiles":  [
-                        "src/CloudSSD.Cli/*",
-                        "tests/CloudSSD.Tests/CliTuiTests.cs",
-                        "src/CloudSSD.App/LocalMobileBridgeService.*"
-                    ],
+    "taskId":  "TASK-CLAUDE-APPS-2",
+    "taskTitle":  "apps-open-from-cloud-froze-window",
+    "agent":  "Claude",
+    "startTime":  "2026-11-25T20:12:47.5940492+05:30",
+    "backupFolder":  "2026-11-25_2012_apps-open-from-cloud-froze-window",
+    "targetFiles":  {
+
+                    },
     "status":  "IN_PROGRESS"
 }

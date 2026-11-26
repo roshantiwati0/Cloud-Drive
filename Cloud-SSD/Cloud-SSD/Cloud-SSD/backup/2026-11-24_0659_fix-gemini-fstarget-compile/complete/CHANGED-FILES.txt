@@ -1,0 +1,11 @@
+﻿Work finished: 2026-11-24 07:58
+
+NEW files (0):
+
+CHANGED files (1):
+  src\CloudSSD.App\LocalMobileBridgeService.Gemini.cs
+
+REMOVED files (0):
+
+The finished version of every new and changed file is in complete\files\ (same path as in the project).
+To go back to how it was: copy the same paths from before\ over the project, and delete the NEW files.

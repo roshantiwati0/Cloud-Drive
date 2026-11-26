@@ -1,0 +1,9 @@
+﻿Work: gemini-api-feature
+Agent: Antigravity
+TaskId: TASK-ANTIGRAVITY-GEMINI-1
+Source as it was before the work started: 653 files, 13.3 MB.
+Taken: 2026-11-24 06:35
+
+The folder "before" is never changed. When the work is ready, run:
+  tools\backup\backup.ps1 complete -Folder "2026-11-24_0634_gemini-api-feature"
+and write complete\README.md.
